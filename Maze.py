@@ -95,6 +95,9 @@ class Maze:
                             print c,
                     print "\n",
 
+        if self.isFinished():
+            print "You win!"
+
     def turnRight(self):
         self.orientation = self.dirs.next()
         self.draw()
@@ -123,3 +126,9 @@ class Maze:
             moved = False
         self.draw()
         return moved
+
+    def isFinished(self):
+        if self.grid:
+            if self.grid[self.position[0]][self.position[1]] == 'F':
+                return True
+        return False
