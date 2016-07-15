@@ -1,4 +1,8 @@
+import itertools
+
 class Maze:
+    directions = ['N', 'E', 'S', 'W']
+
     def __init__(self):
         self.clear()
 
@@ -9,6 +13,18 @@ class Maze:
         self.start = (0, 0)
         self.finish = (0, 0)
         self.position = (0, 0)
+        self.dirs = itertools.cycle(self.directions)
+        self.orientation = self.dirs.next()
+
+    def _getDirArrow(self):
+        if self.orientation == 'N':
+            return '^'
+        elif self.orientation == 'E':
+            return '>'
+        elif self.orientation == 'S':
+            return 'v'
+        elif self.orientation == 'W':
+            return '<'
 
     def load(self, filename):
         self.grid = []
@@ -56,7 +72,7 @@ class Maze:
             for row_no, line in enumerate(self.grid):
                 for col_no, c in enumerate(line):
                     if (row_no, col_no) == self.position:
-                        print "X",
+                        print self._getDirArrow(),
                     elif c == 1:
                         print "#",
                     elif c == 0:
