@@ -44,6 +44,7 @@ class Maze:
                     self.grid[-1].append(c)
                 else:
                     self.grid[-1].append(int(c))
+        f.close()
 
         # check to make sure that all lines are the same length
         length = len(self.grid[0])
