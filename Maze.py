@@ -63,7 +63,7 @@ class Maze:
         for row in self.grid[1:]:
             if len(row) != length:
                print "Error: all rows must be the same length" 
-               clear()
+               self.clear()
                return
 
         n_rows = len(self.grid)
@@ -72,12 +72,12 @@ class Maze:
         # check to make sure that a start and finish point are defined
         if not any(map(lambda x: 'S' in x, self.grid)):
             print "Error: maze does not contain a starting point"
-            clear()
+            self.clear()
             return
 
         if not any(map(lambda x: 'F' in x, self.grid)):
             print "Error: maze does not contain an ending point"
-            clear()
+            self.clear()
             return
 
     def draw(self):
@@ -132,3 +132,10 @@ class Maze:
             if self.grid[self.position[0]][self.position[1]] == 'F':
                 return True
         return False
+
+    def pathIsClear(self):
+        next_cell = self._getNext()
+        if self.grid[next_cell[0]][next_cell[1]] != 1:
+            return True
+        else:
+            return False
