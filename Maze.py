@@ -15,6 +15,10 @@ class Maze:
         self.position = (0, 0)
         self.dirs = itertools.cycle(self.directions)
         self.orientation = self.dirs.next()
+        self.show = True
+
+    def setDraw(self, s):
+        self.show = s
 
     def _getDirArrow(self):
         if self.orientation == 'N':
@@ -77,18 +81,19 @@ class Maze:
             return
 
     def draw(self):
-        if self.grid:
-            for row_no, line in enumerate(self.grid):
-                for col_no, c in enumerate(line):
-                    if (row_no, col_no) == self.position:
-                        print self._getDirArrow(),
-                    elif c == 1:
-                        print "#",
-                    elif c == 0:
-                        print " ",
-                    else:
-                        print c,
-                print "\n",
+        if self.show:
+            if self.grid:
+                for row_no, line in enumerate(self.grid):
+                    for col_no, c in enumerate(line):
+                        if (row_no, col_no) == self.position:
+                            print self._getDirArrow(),
+                        elif c == 1:
+                            print "#",
+                        elif c == 0:
+                            print " ",
+                        else:
+                            print c,
+                    print "\n",
 
     def turnRight(self):
         self.orientation = self.dirs.next()
