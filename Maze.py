@@ -1,4 +1,4 @@
-import itertools
+import itertools, StringIO
 
 class Maze:
     directions = ['N', 'E', 'S', 'W']
@@ -26,11 +26,20 @@ class Maze:
         elif self.orientation == 'W':
             return '<'
 
+    def loadString(self, s):
+        s = StringIO.StringIO(s)
+        self._load(s)
+        s.close()
+
     def load(self, filename):
-        self.grid = []
         f = open(filename)
         if not f:
             print "Cannot find" + filename
+        self._load(f)
+        f.close()
+
+    def _load(self, f):
+        self.grid = []
         for row_no, line in enumerate(f):
             self.grid.append([])
             cells = line.split()
@@ -44,7 +53,6 @@ class Maze:
                     self.grid[-1].append(c)
                 else:
                     self.grid[-1].append(int(c))
-        f.close()
 
         # check to make sure that all lines are the same length
         length = len(self.grid[0])
