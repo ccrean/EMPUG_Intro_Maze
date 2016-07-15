@@ -89,3 +89,23 @@ class Maze:
         for i in range(len(self.directions) - 1):
             self.orientation = self.dirs.next()
         self.draw()
+
+    def _getNext(self):
+        if self.orientation == 'N':
+            return self.position[0] - 1, self.position[1]
+        elif self.orientation == 'E':
+            return self.position[0], self.position[1] + 1
+        elif self.orientation == 'S':
+            return self.position[0] + 1, self.position[1]
+        elif self.orientation == 'W':
+            return self.position[0], self.position[1] - 1
+
+    def moveForward(self):
+        next_cell = self._getNext()
+        if self.grid[next_cell[0]][next_cell[1]] != 1:
+            self.position = next_cell
+            moved = True
+        else:
+            moved = False
+        self.draw()
+        return moved
