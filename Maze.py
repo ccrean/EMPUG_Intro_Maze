@@ -80,3 +80,12 @@ class Maze:
                     else:
                         print c,
                 print "\n",
+
+    def turnRight(self):
+        self.orientation = self.dirs.next()
+        self.draw()
+
+    def turnLeft(self):
+        for i in range(len(self.directions) - 1):
+            self.orientation = self.dirs.next()
+        self.draw()
