@@ -13,6 +13,26 @@ class Maze:
         self.clear()
         self.screen = None
 
+        # Create a triangle to represent the player
+        player_size = 20
+        self._player = pygame.Surface((player_size, player_size))
+        self._player.fill(self._cell_color)
+        pygame.draw.polygon(self._player, self._player_color,
+                            ((1, player_size - 1),
+                             (player_size - 1, player_size - 1),
+                             (player_size / 2, 1)))
+        # Resize the triangle to fit in a cell
+        pygame.transform.scale(self._player, (self._cell_width,
+                                              self._cell_height))
+
+        # Create a rectangle to represent the cell background
+        self._background = pygame.Surface((self._cell_width,
+                                           self._cell_height))
+        pygame.draw.polygon(self._background, self._cell_color,
+                            ((0, 0), (0, self._cell_height),
+                             (self._cell_width, self._cell_height),
+                             (self._cell_width, 0)))
+
     def __del__(self):
         pygame.quit()
 
@@ -138,18 +158,15 @@ class Maze:
 
     def _redrawPlayer(self, old_pos):
         if self.screen:
-            for position, color in zip((old_pos, self.position),
-                                       (self._cell_color,
-                                        self._player_color)):
+            for position, shape in zip((old_pos, self.position),
+                                       (self._background, self._player)):
                 x_coord = position[1] * (self._cell_height +\
                                              self._cell_sep) -\
                                              self._cell_sep
                 y_coord = position[0] * (self._cell_height +\
                                              self._cell_sep) -\
                                              self._cell_sep
-                rect = pygame.Rect(x_coord, y_coord, self._cell_width,
-                                   self._cell_height)
-                pygame.draw.rect(self.screen, color, rect)
+                self.screen.blit(shape, (x_coord, y_coord))
             pygame.display.update()
 
     def turnRight(self):
