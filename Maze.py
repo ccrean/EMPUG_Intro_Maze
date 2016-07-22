@@ -97,8 +97,6 @@ class Maze:
                     self.n_rows - self._cell_sep
                 width = (self._cell_width + self._cell_sep) *\
                     self.n_cols - self._cell_sep
-                print "width =", width
-                print "height =", height
                 if self.screen == None or \
                         (pygame.display.Info().current_w,
                          pygame.display.Info().current_h) != (width, height):
@@ -138,6 +136,22 @@ class Maze:
         if self.isFinished():
             print "You win!"
 
+    def _redrawPlayer(self, old_pos):
+        if self.screen:
+            for position, color in zip((old_pos, self.position),
+                                       (self._cell_color,
+                                        self._player_color)):
+                x_coord = position[1] * (self._cell_height +\
+                                             self._cell_sep) -\
+                                             self._cell_sep
+                y_coord = position[0] * (self._cell_height +\
+                                             self._cell_sep) -\
+                                             self._cell_sep
+                rect = pygame.Rect(x_coord, y_coord, self._cell_width,
+                                   self._cell_height)
+                pygame.draw.rect(self.screen, color, rect)
+            pygame.display.update()
+
     def turnRight(self):
         self.orientation = self.dirs.next()
         self.draw()
@@ -158,13 +172,15 @@ class Maze:
             return self.position[0], self.position[1] - 1
 
     def moveForward(self):
+        old_pos = self.position
         next_cell = self._getNext()
         if self.grid[next_cell[0]][next_cell[1]] != 1:
             self.position = next_cell
             moved = True
         else:
             moved = False
-        self.draw()
+        # self.draw()
+        self._redrawPlayer(old_pos)
         return moved
 
     def isFinished(self):
