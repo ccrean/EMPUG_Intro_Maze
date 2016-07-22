@@ -66,8 +66,8 @@ class Maze:
                self.clear()
                return
 
-        n_rows = len(self.grid)
-        n_cols = length
+        self.n_rows = len(self.grid)
+        self.n_cols = length
 
         # check to make sure that a start and finish point are defined
         if not any(map(lambda x: 'S' in x, self.grid)):
