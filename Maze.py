@@ -1,10 +1,20 @@
-import itertools, StringIO
+import itertools, StringIO, pygame
 
 class Maze:
     directions = ['N', 'E', 'S', 'W']
+    _cell_width = 20
+    _cell_height = 20
+    _cell_sep = 1
+    _cell_color = pygame.Color(210, 180, 140)
+    _player_color = pygame.Color(255, 0, 0)
+    _wall_color = pygame.Color(100, 100, 100)
 
     def __init__(self):
         self.clear()
+        self.screen = None
+
+    def __del__(self):
+        pygame.quit()
 
     def clear(self):
         self.grid = None
@@ -66,8 +76,8 @@ class Maze:
                self.clear()
                return
 
-        n_rows = len(self.grid)
-        n_cols = length
+        self.n_rows = len(self.grid)
+        self.n_cols = length
 
         # check to make sure that a start and finish point are defined
         if not any(map(lambda x: 'S' in x, self.grid)):
@@ -83,17 +93,47 @@ class Maze:
     def draw(self):
         if self.show:
             if self.grid:
+                height = (self._cell_height + self._cell_sep) *\
+                    self.n_rows - self._cell_sep
+                width = (self._cell_width + self._cell_sep) *\
+                    self.n_cols - self._cell_sep
+                print "width =", width
+                print "height =", height
+                if self.screen == None or \
+                        (pygame.display.Info().current_w,
+                         pygame.display.Info().current_h) != (width, height):
+                    self.screen = pygame.display.set_mode((width, height))
                 for row_no, line in enumerate(self.grid):
                     for col_no, c in enumerate(line):
+                        x_coord = col_no * self._cell_width +\
+                            (col_no - 1) * self._cell_sep
+                        y_coord = row_no * self._cell_height +\
+                            (row_no - 1) * self._cell_sep
+                        rect = pygame.Rect(x_coord, y_coord,
+                                           self._cell_width,
+                                           self._cell_height)
                         if (row_no, col_no) == self.position:
                             print self._getDirArrow(),
+                            pygame.draw.rect(self.screen,
+                                             self._player_color, rect)
                         elif c == 1:
                             print "#",
+                            pygame.draw.rect(self.screen,
+                                             self._wall_color,
+                                             rect)
                         elif c == 0:
                             print " ",
+                            pygame.draw.rect(self.screen,
+                                             self._cell_color,
+                                             rect)
                         else:
                             print c,
+                            pygame.draw.rect(self.screen,
+                                             self._cell_color,
+                                             rect)
                     print "\n",
+                if self.screen:
+                    pygame.display.update()
 
         if self.isFinished():
             print "You win!"
