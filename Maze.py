@@ -22,8 +22,9 @@ class Maze:
                              (player_size - 1, player_size - 1),
                              (player_size / 2, 1)))
         # Resize the triangle to fit in a cell
-        pygame.transform.scale(self._player, (self._cell_width,
-                                              self._cell_height))
+        self._player = pygame.transform.scale(self._player,
+                                              (self._cell_width,
+                                               self._cell_height))
 
         # Create a rectangle to represent the cell background
         self._background = pygame.Surface((self._cell_width,
@@ -130,26 +131,19 @@ class Maze:
                         rect = pygame.Rect(x_coord, y_coord,
                                            self._cell_width,
                                            self._cell_height)
-                        if (row_no, col_no) == self.position:
-                            print self._getDirArrow(),
-                            pygame.draw.rect(self.screen,
-                                             self._player_color, rect)
-                        elif c == 1:
-                            print "#",
+                        if c == 1:
                             pygame.draw.rect(self.screen,
                                              self._wall_color,
                                              rect)
                         elif c == 0:
-                            print " ",
                             pygame.draw.rect(self.screen,
                                              self._cell_color,
                                              rect)
                         else:
-                            print c,
                             pygame.draw.rect(self.screen,
                                              self._cell_color,
                                              rect)
-                    print "\n",
+                        self._redrawPlayer(self.position)
                 if self.screen:
                     pygame.display.update()
 
@@ -171,12 +165,14 @@ class Maze:
 
     def turnRight(self):
         self.orientation = self.dirs.next()
-        self.draw()
+        self._player = pygame.transform.rotate(self._player, -90)
+        self._redrawPlayer(self.position)
 
     def turnLeft(self):
         for i in range(len(self.directions) - 1):
             self.orientation = self.dirs.next()
-        self.draw()
+        self._player = pygame.transform.rotate(self._player, 90)
+        self._redrawPlayer(self.position)
 
     def _getNext(self):
         if self.orientation == 'N':
