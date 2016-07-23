@@ -7,11 +7,10 @@ class Maze:
     _cell_sep = 1
     _player_color = pygame.Color(255, 0, 0)
     _font_color = pygame.Color(0, 0, 0)
-    _colormap = { 0: pygame.Color(210, 180, 140),
-                  1: pygame.Color(100, 100, 100),
-                  'S': pygame.Color(0, 255, 0),
-                  'F': pygame.Color(0, 0, 255)
-                  }
+    _bg_color = pygame.Color(210, 180, 140),
+    _wall_color = pygame.Color(0, 0, 0),
+    _start_color = pygame.Color(0, 255, 0),
+    _end_color = pygame.Color(0, 0, 255)
 
     def __init__(self):
         self.clear()
@@ -33,8 +32,44 @@ class Maze:
                                               (self._cell_width,
                                                self._cell_height))
 
-        # Create label to congratulate user when they win
+        # Initialize fonts
         pygame.font.init()
+
+        self._createWalls()
+
+    def _createWalls(self):
+        """
+        Create images to represent walls.
+        """
+        top_left_corner = (0, 0)
+        top_right_corner = (self._cell_width + self._cell_sep, 0)
+        bottom_right_corner = (self._cell_width + self._cell_sep,
+                               self._cell_height + self._cell_sep)
+        bottom_left_corner = (0, self._cell_height + self._cell_sep)
+
+        self._left_wall = self._getTransparentCell()
+        pygame.draw.line(self._left_wall, self._wall_color,
+                         top_left_corner, bottom_left_corner)
+
+        self._top_wall = self._getTransparentCell()
+        pygame.draw.line(self._top_wall, self._wall_color,
+                         top_left_corner, top_right_corner)
+
+        self._right_wall = self._getTransparentCell()
+        pygame.draw.line(self._right_wall, self._wall_color,
+                         top_right_corner, bottom_right_corner)
+
+        self._bottom_wall = self._getTransparentCell()
+        pygame.draw.line(self._bottom_wall, self._wall_color,
+                         bottom_right_corner, bottom_left_corner)
+
+    def _getTransparentCell(self):
+        transparent_color = pygame.Color(255, 0, 255)
+        cell = pygame.Surface((self._cell_width + 2 * self._cell_sep,
+                               self._cell_height + 2 * self._cell_sep))
+        cell.fill(transparent_color)
+        cell.set_colorkey(transparent_color)
+        return cell
 
     def __del__(self):
         pygame.quit()
@@ -79,15 +114,7 @@ class Maze:
             self.grid.append([])
             cells = line.split()
             for col_no, c in enumerate(cells):
-                if c == 'S':
-                    self.start = (row_no, col_no)
-                    self.position = (row_no, col_no)
-                    self.grid[-1].append(c)
-                elif c == 'F':
-                    self.finish = (row_no, col_no)
-                    self.grid[-1].append(c)
-                else:
-                    self.grid[-1].append(int(c))
+                self.grid[-1].append(c)
 
         # check to make sure that all lines are the same length
         length = len(self.grid[0])
@@ -98,40 +125,39 @@ class Maze:
                return
 
         # check to make sure that a start and finish point are defined
-        if not any(map(lambda x: 'S' in x, self.grid)):
-            print "Error: maze does not contain a starting point"
-            self.clear()
-            return
-
-        if not any(map(lambda x: 'F' in x, self.grid)):
-            print "Error: maze does not contain an ending point"
-            self.clear()
-            return
 
     def draw(self):
         if self.show:
             if self.grid:
+                # Size of screen
                 height = (self._cell_height + self._cell_sep) *\
-                    len(self.grid) - self._cell_sep
+                    len(self.grid) + self._cell_sep
                 width = (self._cell_width + self._cell_sep) *\
-                    len(self.grid[0]) - self._cell_sep
+                    len(self.grid[0]) + self._cell_sep
                 if self.screen == None or \
                         (pygame.display.Info().current_w,
                          pygame.display.Info().current_h) != (width, height):
                     self.screen = pygame.display.set_mode((width, height))
+                    self.screen.fill(self._bg_color)
                 for row_no, line in enumerate(self.grid):
                     for col_no, c in enumerate(line):
-                        x_coord = col_no * self._cell_width +\
-                            (col_no - 1) * self._cell_sep
-                        y_coord = row_no * self._cell_height +\
-                            (row_no - 1) * self._cell_sep
-                        rect = pygame.Rect(x_coord, y_coord,
-                                           self._cell_width,
-                                           self._cell_height)
-                        pygame.draw.rect(self.screen,
-                                    self._colormap[self.grid[row_no][col_no]],
-                                    rect)
-                        self._redrawPlayer(self.position)
+                        x_coord = col_no * (self._cell_width +\
+                                                self._cell_sep)
+                        y_coord = row_no * (self._cell_height +\
+                                                self._cell_sep)
+                        if 'N' not in c:
+                            self.screen.blit(self._top_wall,
+                                             (x_coord, y_coord))
+                        if 'E' not in c:
+                            self.screen.blit(self._right_wall,
+                                             (x_coord, y_coord))
+                        if 'S' not in c:
+                            self.screen.blit(self._bottom_wall,
+                                             (x_coord, y_coord))
+                        if 'W' not in c:
+                            self.screen.blit(self._left_wall,
+                                             (x_coord, y_coord))
+                self._redrawPlayer(self.position)
                 pygame.display.update()
                 self._checkFinished()
 
@@ -139,18 +165,17 @@ class Maze:
         if self.screen:
             background = pygame.Surface((self._cell_width,
                                          self._cell_height))
-            color = self._colormap[self.grid[old_pos[0]][old_pos[1]]]
-            pygame.draw.polygon(background, color,
+            pygame.draw.polygon(background, self._bg_color,
                                 ((0, 0), (0, self._cell_height),
                                  (self._cell_width, self._cell_height),
                                  (self._cell_width, 0)))
             for position, shape in zip((old_pos, self.position),
                                        (background, self._player)):
                 x_coord = position[1] * (self._cell_height +\
-                                             self._cell_sep) -\
+                                             self._cell_sep) +\
                                              self._cell_sep
                 y_coord = position[0] * (self._cell_height +\
-                                             self._cell_sep) -\
+                                             self._cell_sep) +\
                                              self._cell_sep
                 self.screen.blit(shape, (x_coord, y_coord))
             self._checkFinished()
