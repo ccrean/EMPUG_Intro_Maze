@@ -17,7 +17,10 @@ class Maze:
         # Create a triangle to represent the player
         player_size = 20
         self._player = pygame.Surface((player_size, player_size))
-        self._player.fill(self._cell_color)
+        # Give the player image a transparent background
+        transparent_color = pygame.Color(255, 0, 255)
+        self._player.fill(transparent_color)
+        self._player.set_colorkey(transparent_color)
         pygame.draw.polygon(self._player, self._player_color,
                             ((1, player_size - 1),
                              (player_size - 1, player_size - 1),
