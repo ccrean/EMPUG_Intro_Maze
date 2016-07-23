@@ -8,6 +8,7 @@ class Maze:
     _cell_color = pygame.Color(210, 180, 140)
     _player_color = pygame.Color(255, 0, 0)
     _wall_color = pygame.Color(100, 100, 100)
+    _font_color = pygame.Color(0, 0, 0)
 
     def __init__(self):
         self.clear()
@@ -33,6 +34,9 @@ class Maze:
                             ((0, 0), (0, self._cell_height),
                              (self._cell_width, self._cell_height),
                              (self._cell_width, 0)))
+
+        # Create label to congratulate user when they win
+        pygame.font.init()
 
     def __del__(self):
         pygame.quit()
@@ -144,11 +148,8 @@ class Maze:
                                              self._cell_color,
                                              rect)
                         self._redrawPlayer(self.position)
-                if self.screen:
-                    pygame.display.update()
-
-        if self.isFinished():
-            print "You win!"
+                pygame.display.update()
+                self._checkFinished()
 
     def _redrawPlayer(self, old_pos):
         if self.screen:
@@ -161,6 +162,7 @@ class Maze:
                                              self._cell_sep) -\
                                              self._cell_sep
                 self.screen.blit(shape, (x_coord, y_coord))
+            self._checkFinished()
             pygame.display.update()
 
     def turnRight(self):
@@ -208,3 +210,14 @@ class Maze:
             return True
         else:
             return False
+
+    def _checkFinished(self):
+        if self.isFinished():
+            font = pygame.font.SysFont('monospace', 30)
+            congrats = font.render('You win!', 1, self._font_color)
+            congrats_x = (self._cell_width * self.n_cols -\
+                              congrats.get_width()) / 2
+            congrats_y = (self._cell_height * self.n_rows -\
+                              congrats.get_height()) / 2
+            self.screen.blit(congrats, (congrats_x, congrats_y))
+            pygame.display.update()
