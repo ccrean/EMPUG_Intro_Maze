@@ -33,32 +33,27 @@ class Maze:
 
     def _createGraphics(self):
         # Create a triangle to represent the player
-        player_size = 20
-        self._player = pygame.Surface((player_size, player_size))
+        self._player = pygame.Surface((self._cell_width,
+                                       self._cell_height))
         # Give the player image a transparent background
         transparent_color = pygame.Color(255, 0, 255)
         self._player.fill(transparent_color)
         self._player.set_colorkey(transparent_color)
         pygame.draw.polygon(self._player, self._player_color,
-                            ((1, player_size - 1),
-                             (player_size - 1, player_size - 1),
-                             (player_size / 2, 1)))
-        # Resize the triangle to fit in a cell
-        self._player = pygame.transform.scale(self._player,
-                                              (self._cell_width,
-                                               self._cell_height))
+                            ((1, self._cell_height - 1),
+                             (self._cell_width - 1, self._cell_height - 1),
+                             (self._cell_width / 2, 1)))
 
         # Create an image to represent cells that the player has already
         # traveled through
-        self._breadcrumb = pygame.Surface((player_size, player_size))
+        self._breadcrumb = pygame.Surface((self._cell_width,
+                                           self._cell_height))
         self._breadcrumb.fill(transparent_color)
         self._breadcrumb.set_colorkey(transparent_color)
+        radius = max(min(self._cell_width, self._cell_height) / 10, 1)
         pygame.draw.circle(self._breadcrumb, self._wall_color,
-                           (player_size / 2, player_size / 2), 2)
-        # Resize the breadcrumb
-        self._breadcrumb = pygame.transform.scale(self._breadcrumb,
-                                                  (self._cell_width,
-                                                   self._cell_height))
+                           (self._cell_width / 2,
+                            self._cell_height / 2), radius)
 
         # Create cells to represent the start and end points
         self._start_cell = pygame.Surface((self._cell_width,
