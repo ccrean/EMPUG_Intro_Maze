@@ -7,8 +7,8 @@ class Maze:
     _cell_sep = 1
     _player_color = pygame.Color(255, 0, 0)
     _font_color = pygame.Color(0, 0, 0)
-    _colormap = { 0: pygame.Color(100, 100, 100),
-                  1: pygame.Color(210, 180, 140),
+    _colormap = { 0: pygame.Color(210, 180, 140),
+                  1: pygame.Color(100, 100, 100),
                   'S': pygame.Color(0, 255, 0),
                   'F': pygame.Color(0, 0, 255)
                   }
