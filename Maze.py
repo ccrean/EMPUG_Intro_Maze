@@ -288,7 +288,7 @@ class Maze:
 
     def line(self, length):
         self.clear()
-        self.grid, self.start, self.finsih = self._generator.line(length)
+        self.grid, self.start, self.finish = self._generator.line(length)
         self.position = self.start
         self.draw()
 
