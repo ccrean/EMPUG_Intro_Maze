@@ -1,10 +1,12 @@
 import unittest
 import Maze
 import StringIO
+import IPython
 
 class MazeTest(unittest.TestCase):
 
-    grid = "1 1 1 1 1 1 1 1\nS 0 0 1 0 0 0 1\n1 1 0 1 0 1 1 1\n1 0 0 0 0 1 0 F\n1 0 1 1 0 1 0 1\n1 0 0 1 0 1 0 1\n1 1 0 1 0 0 0 1\n1 1 1 1 1 1 1 1"
+    # grid = "1 1 1 1 1 1 1 1\nS 0 0 1 0 0 0 1\n1 1 0 1 0 1 1 1\n1 0 0 0 0 1 0 F\n1 0 1 1 0 1 0 1\n1 0 0 1 0 1 0 1\n1 1 0 1 0 0 0 1\n1 1 1 1 1 1 1 1"
+    grid = "E WES W$\nE^ WENS WS\nE WN N"
 
     def testTurn(self):
         m = Maze.Maze()
@@ -32,10 +34,10 @@ class MazeTest(unittest.TestCase):
         m = Maze.Maze()
         m.loadString(self.grid)
         m.setDraw(False)
+        # IPython.embed()
 
         self.assertEqual(m.position, (1, 0))
         self.assertEqual(m.orientation, 'N')
-        self.assertEqual(m.position, (1, 0))
         
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (1, 0))
@@ -80,10 +82,10 @@ class MazeTest(unittest.TestCase):
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, pos)
 
-        m.position = (3, 7)
+        m.position = (2, 2)
         m.orientation = 'E'
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (3, 7))
+        self.assertEqual(m.position, (2, 2))
 
     def testLine(self):
         """

@@ -108,6 +108,7 @@ class Maze:
         f.close()
 
     def _load(self, f):
+        self.clear()
         self.grid = []
         for row_no, line in enumerate(f):
             self.grid.append([])
@@ -136,6 +137,8 @@ class Maze:
             self.clear()
             raise ValueError("end point not defined (use '$' to mark " +
                              "the end point)")
+
+        self.position = self.start
 
     def draw(self):
         if self.show:
