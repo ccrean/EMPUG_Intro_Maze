@@ -278,10 +278,16 @@ class Maze:
             pygame.display.update()
 
     def line(self, length):
+        self.clear()
         if length < 1:
             raise ValueError("length must be >= 1")
-        self.grid = [ [ 1 ] * length, [ 0 ] * length, [ 1 ] * length ]
-        self.grid[1][0] = 'S'
-        self.grid[1][-1] = 'F'
-        self.position = (1,0)
+        self.grid = [ [ '' ] * length ]
+        if length > 1:
+            self.grid[0][0] += 'E'
+            self.grid[0][-1] += 'W'
+        for i in range(1, length-1):
+            self.grid[0][i] += 'WE'
+        self.start = (0, 0)
+        self.finish = (0, length - 1)
+        self.position = self.start
         self.draw()
