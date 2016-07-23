@@ -36,6 +36,7 @@ class Maze:
         pygame.font.init()
 
         self._createWalls()
+        self.setDraw(True)
 
     def _createWalls(self):
         """
@@ -292,3 +293,12 @@ class Maze:
         self.finish = (0, length - 1)
         self.position = self.start
         self.draw()
+
+    def _getNeighbors(self, cell, visited):
+        potential_neighbors = [ (max(cell[0] - 1, 0), cell[1]),          # above
+                                (min(cell[0] + 1, len(self.grid)), cell[1]),  # below
+                                (cell[0], max(cell[1] - 1, 0)),          # left
+                                (cell[0], min(cell[1] + 1, len(self.grid[0])))# right
+                                ]
+        neighbors = [ c for c in potential_neighbors if c != cell and cell not in visited]
+        return neighbors
