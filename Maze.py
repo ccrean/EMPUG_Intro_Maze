@@ -5,11 +5,13 @@ class Maze:
     _cell_width = 20
     _cell_height = 20
     _cell_sep = 1
-    _cell_color = pygame.Color(210, 180, 140)
     _player_color = pygame.Color(255, 0, 0)
-    _wall_color = pygame.Color(100, 100, 100)
     _font_color = pygame.Color(0, 0, 0)
-    _end_color = pygame.Color(0, 0, 255)
+    _colormap = { 0: pygame.Color(100, 100, 100),
+                  1: pygame.Color(210, 180, 140),
+                  'S': pygame.Color(0, 255, 0),
+                  'F': pygame.Color(0, 0, 255)
+                  }
 
     def __init__(self):
         self.clear()
@@ -30,14 +32,6 @@ class Maze:
         self._player = pygame.transform.scale(self._player,
                                               (self._cell_width,
                                                self._cell_height))
-
-        # Create a rectangle to represent the cell background
-        self._background = pygame.Surface((self._cell_width,
-                                           self._cell_height))
-        pygame.draw.polygon(self._background, self._cell_color,
-                            ((0, 0), (0, self._cell_height),
-                             (self._cell_width, self._cell_height),
-                             (self._cell_width, 0)))
 
         # Create label to congratulate user when they win
         pygame.font.init()
@@ -139,30 +133,24 @@ class Maze:
                         rect = pygame.Rect(x_coord, y_coord,
                                            self._cell_width,
                                            self._cell_height)
-                        if c == 1:
-                            pygame.draw.rect(self.screen,
-                                             self._wall_color,
-                                             rect)
-                        elif c == 0:
-                            pygame.draw.rect(self.screen,
-                                             self._cell_color,
-                                             rect)
-                        elif c == 'F':
-                            pygame.draw.rect(self.screen,
-                                             self._end_color,
-                                             rect)
-                        else:
-                            pygame.draw.rect(self.screen,
-                                             self._cell_color,
-                                             rect)
+                        pygame.draw.rect(self.screen,
+                                    self._colormap[self.grid[row_no][col_no]],
+                                    rect)
                         self._redrawPlayer(self.position)
                 pygame.display.update()
                 self._checkFinished()
 
     def _redrawPlayer(self, old_pos):
         if self.screen:
+            background = pygame.Surface((self._cell_width,
+                                         self._cell_height))
+            color = self._colormap[self.grid[old_pos[0]][old_pos[1]]]
+            pygame.draw.polygon(background, color,
+                                ((0, 0), (0, self._cell_height),
+                                 (self._cell_width, self._cell_height),
+                                 (self._cell_width, 0)))
             for position, shape in zip((old_pos, self.position),
-                                       (self._background, self._player)):
+                                       (background, self._player)):
                 x_coord = position[1] * (self._cell_height +\
                                              self._cell_sep) -\
                                              self._cell_sep
