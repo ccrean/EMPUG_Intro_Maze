@@ -1,3 +1,3 @@
-E    WES   W    
+E^    WES   W    
 E    SWEN  W    
-E    EWN   W    
+E    EWN   W$    

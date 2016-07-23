@@ -76,8 +76,8 @@ class Maze:
 
     def clear(self):
         self.grid = None
-        self.start = (0, 0)
-        self.finish = (0, 0)
+        self.start = None
+        self.finish = None
         self.position = (0, 0)
         self.dirs = itertools.cycle(self.directions)
         self.orientation = self.dirs.next()
@@ -115,6 +115,10 @@ class Maze:
             cells = line.split()
             for col_no, c in enumerate(cells):
                 self.grid[-1].append(c)
+                if '^' in c:
+                    self.start = (row_no, col_no)
+                if '$' in c:
+                    self.finish = (row_no, col_no)
 
         # check to make sure that all lines are the same length
         length = len(self.grid[0])
@@ -125,6 +129,14 @@ class Maze:
                return
 
         # check to make sure that a start and finish point are defined
+        if not self.start:
+            self.clear()
+            raise ValueError("start point not defined (use '^' to mark " +
+                             "the starting point)")
+        if not self.finish:
+            self.clear()
+            raise ValueError("end point not defined (use '$' to mark " +
+                             "the end point)")
 
     def draw(self):
         if self.show:
