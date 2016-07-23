@@ -255,7 +255,7 @@ class Maze:
 
     def isFinished(self):
         if self.grid:
-            if self.grid[self.position[0]][self.position[1]] == 'F':
+            if self.position == self.finish:
                 return True
         return False
 
