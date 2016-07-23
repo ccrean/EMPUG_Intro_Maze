@@ -9,6 +9,7 @@ class Maze:
     _player_color = pygame.Color(255, 0, 0)
     _wall_color = pygame.Color(100, 100, 100)
     _font_color = pygame.Color(0, 0, 0)
+    _end_color = pygame.Color(0, 0, 255)
 
     def __init__(self):
         self.clear()
@@ -145,6 +146,10 @@ class Maze:
                         elif c == 0:
                             pygame.draw.rect(self.screen,
                                              self._cell_color,
+                                             rect)
+                        elif c == 'F':
+                            pygame.draw.rect(self.screen,
+                                             self._end_color,
                                              rect)
                         else:
                             pygame.draw.rect(self.screen,
