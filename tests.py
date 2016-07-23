@@ -95,11 +95,9 @@ class MazeTest(unittest.TestCase):
             m.line(-1)
             m.line(0)
 
-        m.turnRight()
         for length in [ 20, 100 ]:
             m.line(length)
-            self.assertEqual(len(m.grid), 3)
-            self.assertEqual(len(m.grid[0]), length)
+            m.turnRight()
 
             for i in range(length - 1):
                 self.assertTrue(m.moveForward())

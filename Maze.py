@@ -1,5 +1,4 @@
 import itertools, StringIO, pygame
-import IPython
 
 class Maze:
     directions = ['N', 'E', 'S', 'W']
@@ -82,7 +81,6 @@ class Maze:
         self.position = (0, 0)
         self.dirs = itertools.cycle(self.directions)
         self.orientation = self.dirs.next()
-        self.show = True
 
     def setDraw(self, s):
         self.show = s
