@@ -226,3 +226,14 @@ class Maze:
                               congrats.get_height()) / 2
             self.screen.blit(congrats, (congrats_x, congrats_y))
             pygame.display.update()
+
+    def line(self, length):
+        if length < 1:
+            raise ValueError("length must be >= 1")
+        self.grid = [ [ 1 ] * length, [ 0 ] * length, [ 1 ] * length ]
+        self.grid[1][0] = 'S'
+        self.grid[1][-1] = 'F'
+        self.position = (1,0)
+        self.n_rows = 3
+        self.n_cols = length
+        self.draw()

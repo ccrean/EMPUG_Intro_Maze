@@ -85,6 +85,26 @@ class MazeTest(unittest.TestCase):
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (3, 7))
 
+    def testLine(self):
+        """
+        Test method for generating straight-line mazes.
+        """
+        m = Maze.Maze()
+        m.setDraw(False)
+        with self.assertRaises(ValueError):
+            m.line(-1)
+            m.line(0)
+
+        m.turnRight()
+        for length in [ 20, 100 ]:
+            m.line(length)
+            self.assertEqual(len(m.grid), 3)
+            self.assertEqual(len(m.grid[0]), length)
+
+            for i in range(length - 1):
+                self.assertTrue(m.moveForward())
+            self.assertTrue(m.isFinished())
+            self.assertFalse(m.moveForward())
 
 if __name__ == '__main__':
     unittest.main()
