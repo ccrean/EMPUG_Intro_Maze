@@ -193,7 +193,13 @@ class Maze:
         if self.screen:
             background = pygame.Surface((self._cell_width,
                                          self._cell_height))
-            pygame.draw.polygon(background, self._bg_color,
+            if old_pos == self.start:
+                color = self._start_color
+            elif old_pos == self.finish:
+                color = self._end_color
+            else:
+                color = self._bg_color
+            pygame.draw.polygon(background, color,
                                 ((0, 0), (0, self._cell_height),
                                  (self._cell_width, self._cell_height),
                                  (self._cell_width, 0)))
