@@ -70,6 +70,7 @@ class Maze:
         self._createWalls()
         self.setDraw(True)
         self._generator = MazeGenerator.MazeGenerator()
+        self._trail = False
 
     def _createWalls(self):
         """
@@ -229,7 +230,7 @@ class Maze:
             else:
                 self.screen.blit(self._background,
                                  (x_coord, y_coord))
-            if '*' in c:
+            if '*' in c and self._trail:
                 self.screen.blit(self._breadcrumb,
                                  (x_coord, y_coord))
 
@@ -331,3 +332,6 @@ class Maze:
 
     def _placeBreadcrumb(self, position):
         self.grid[position[0]][position[1]] += '*'
+
+    def setTrail(self, trail):
+        self._trail = trail
