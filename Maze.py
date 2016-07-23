@@ -243,7 +243,7 @@ class Maze:
     def moveForward(self):
         old_pos = self.position
         next_cell = self._getNext()
-        if self.grid[next_cell[0]][next_cell[1]] != 1 and\
+        if self.orientation in self.grid[old_pos[0]][old_pos[1]] and\
                 next_cell != self.position:
             self.position = next_cell
             moved = True
