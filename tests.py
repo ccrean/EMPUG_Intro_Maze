@@ -73,5 +73,18 @@ class MazeTest(unittest.TestCase):
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 1))
 
+        # Make sure that the player can't move off the edge of the map
+        m.loadString(self.grid)
+        pos = m.position
+        m.orientation = 'W'
+        self.assertFalse(m.moveForward())
+        self.assertEqual(m.position, pos)
+
+        m.position = (3, 7)
+        m.orientation = 'E'
+        self.assertFalse(m.moveForward())
+        self.assertEqual(m.position, (3, 7))
+
+
 if __name__ == '__main__':
     unittest.main()

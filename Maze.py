@@ -178,18 +178,23 @@ class Maze:
 
     def _getNext(self):
         if self.orientation == 'N':
-            return self.position[0] - 1, self.position[1]
+            pos = self.position[0] - 1, self.position[1]
         elif self.orientation == 'E':
-            return self.position[0], self.position[1] + 1
+            pos = self.position[0], self.position[1] + 1
         elif self.orientation == 'S':
-            return self.position[0] + 1, self.position[1]
+            pos = self.position[0] + 1, self.position[1]
         elif self.orientation == 'W':
-            return self.position[0], self.position[1] - 1
+            pos = self.position[0], self.position[1] - 1
+        # Make sure that the player doesn't move off the edge of the map
+        pos = min(max(pos[0], 0), self.n_rows - 1),\
+            min(max(pos[1], 0), self.n_cols - 1)
+        return pos
 
     def moveForward(self):
         old_pos = self.position
         next_cell = self._getNext()
-        if self.grid[next_cell[0]][next_cell[1]] != 1:
+        if self.grid[next_cell[0]][next_cell[1]] != 1 and\
+                next_cell != self.position:
             self.position = next_cell
             moved = True
         else:
