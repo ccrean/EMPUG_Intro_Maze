@@ -38,6 +38,32 @@ class Maze:
                                               (self._cell_width,
                                                self._cell_height))
 
+        # Create an image to represent cells that the player has already
+        # traveled through
+        self._breadcrumb = pygame.Surface((player_size, player_size))
+        self._breadcrumb.fill(transparent_color)
+        self._breadcrumb.set_colorkey(transparent_color)
+        pygame.draw.circle(self._breadcrumb, self._wall_color,
+                           (player_size / 2, player_size / 2), 2)
+        # Resize the breadcrumb
+        self._breadcrumb = pygame.transform.scale(self._breadcrumb,
+                                                  (self._cell_width,
+                                                   self._cell_height))
+
+        # Create cells to represent the start and end points
+        self._start_cell = pygame.Surface((self._cell_width,
+                                           self._cell_height))
+        self._start_cell.fill(self._start_color)
+        self._end_cell = pygame.Surface((self._cell_width,
+                                         self._cell_height))
+        self._end_cell.fill(self._end_color)
+
+
+        # Create an image to represent the background
+        self._background = pygame.Surface((self._cell_width,
+                                           self._cell_height))
+        self._background.fill(self._bg_color)
+
         # Initialize fonts
         pygame.font.init()
 
@@ -147,17 +173,11 @@ class Maze:
                              "the end point)")
 
         self.position = self.start
+        self._placeBreadcrumb(self.position)
 
     def draw(self):
         if self.show:
             if self.grid:
-                # Create cells to represent the start and end points
-                start_cell = pygame.Surface((self._cell_width,
-                                             self._cell_height))
-                start_cell.fill(self._start_color)
-                end_cell = pygame.Surface((self._cell_width,
-                                           self._cell_height))
-                end_cell.fill(self._end_color)
                 # Size of screen
                 height = (self._cell_height + self._cell_sep) *\
                     len(self.grid) + self._cell_sep
@@ -186,41 +206,45 @@ class Maze:
                         if 'W' not in c:
                             self.screen.blit(self._left_wall,
                                              (x_coord, y_coord))
-                        if (row_no, col_no) == self.start:
-                            self.screen.blit(start_cell,
-                                             (x_coord + self._cell_sep,
-                                              y_coord + self._cell_sep))
-                        if (row_no, col_no) == self.finish:
-                            self.screen.blit(end_cell,
-                                             (x_coord + self._cell_sep,
-                                              y_coord + self._cell_sep))
+                        self._drawBackground((row_no, col_no))
                 self._redrawPlayer(self.position)
                 pygame.display.update()
                 self._checkFinished()
 
+    def _drawBackground(self, pos):
+        if self.show and self.screen:
+            row_no = pos[0]
+            col_no = pos[1]
+            x_coord = col_no * (self._cell_width +\
+                                    self._cell_sep) + self._cell_sep
+            y_coord = row_no * (self._cell_height +\
+                                    self._cell_sep) + self._cell_sep
+            c = self.grid[row_no][col_no]
+            if (row_no, col_no) == self.start:
+                self.screen.blit(self._start_cell,
+                                 (x_coord, y_coord))
+            elif (row_no, col_no) == self.finish:
+                self.screen.blit(self._end_cell,
+                                 (x_coord, y_coord))
+            else:
+                self.screen.blit(self._background,
+                                 (x_coord, y_coord))
+            if '*' in c:
+                self.screen.blit(self._breadcrumb,
+                                 (x_coord, y_coord))
+
+                
+
     def _redrawPlayer(self, old_pos):
         if self.screen:
-            background = pygame.Surface((self._cell_width,
-                                         self._cell_height))
-            if old_pos == self.start:
-                color = self._start_color
-            elif old_pos == self.finish:
-                color = self._end_color
-            else:
-                color = self._bg_color
-            pygame.draw.polygon(background, color,
-                                ((0, 0), (0, self._cell_height),
-                                 (self._cell_width, self._cell_height),
-                                 (self._cell_width, 0)))
-            for position, shape in zip((old_pos, self.position),
-                                       (background, self._player)):
-                x_coord = position[1] * (self._cell_height +\
-                                             self._cell_sep) +\
-                                             self._cell_sep
-                y_coord = position[0] * (self._cell_height +\
-                                             self._cell_sep) +\
-                                             self._cell_sep
-                self.screen.blit(shape, (x_coord, y_coord))
+            self._drawBackground(old_pos)
+            x_coord = self.position[1] * (self._cell_height +\
+                                              self._cell_sep) +\
+                                              self._cell_sep
+            y_coord = self.position[0] * (self._cell_height +\
+                                              self._cell_sep) +\
+                                              self._cell_sep
+            self.screen.blit(self._player, (x_coord, y_coord))
             self._checkFinished()
             pygame.display.update()
 
@@ -258,7 +282,7 @@ class Maze:
             moved = True
         else:
             moved = False
-        # self.draw()
+        self._placeBreadcrumb(self.position)
         self._redrawPlayer(old_pos)
         return moved
 
@@ -290,6 +314,7 @@ class Maze:
         self.clear()
         self.grid, self.start, self.finish = self._generator.line(length)
         self.position = self.start
+        self._placeBreadcrumb(self.position)
         self.draw()
 
     def random(self, width, height, seed = None):
@@ -301,4 +326,8 @@ class Maze:
                                                                     height,
                                                                     seed)
         self.position = self.start
+        self._placeBreadcrumb(self.position)
         self.draw()
+
+    def _placeBreadcrumb(self, position):
+        self.grid[position[0]][position[1]] += '*'
