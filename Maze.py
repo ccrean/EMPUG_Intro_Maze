@@ -1,4 +1,5 @@
 import itertools, StringIO, pygame
+import IPython
 
 class Maze:
     directions = ['N', 'E', 'S', 'W']
@@ -141,6 +142,13 @@ class Maze:
     def draw(self):
         if self.show:
             if self.grid:
+                # Create cells to represent the start and end points
+                start_cell = pygame.Surface((self._cell_width,
+                                             self._cell_height))
+                start_cell.fill(self._start_color)
+                end_cell = pygame.Surface((self._cell_width,
+                                           self._cell_height))
+                end_cell.fill(self._end_color)
                 # Size of screen
                 height = (self._cell_height + self._cell_sep) *\
                     len(self.grid) + self._cell_sep
@@ -169,6 +177,14 @@ class Maze:
                         if 'W' not in c:
                             self.screen.blit(self._left_wall,
                                              (x_coord, y_coord))
+                        if (row_no, col_no) == self.start:
+                            self.screen.blit(start_cell,
+                                             (x_coord + self._cell_sep,
+                                              y_coord + self._cell_sep))
+                        if (row_no, col_no) == self.finish:
+                            self.screen.blit(end_cell,
+                                             (x_coord + self._cell_sep,
+                                              y_coord + self._cell_sep))
                 self._redrawPlayer(self.position)
                 pygame.display.update()
                 self._checkFinished()
