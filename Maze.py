@@ -22,6 +22,16 @@ class Maze:
         self.clear()
         self.screen = None
 
+        # Initialize fonts
+        pygame.font.init()
+
+        self._createGraphics()
+        self._createWalls()
+        self.setDraw(True)
+        self._generator = MazeGenerator.MazeGenerator()
+        self._trail = False
+
+    def _createGraphics(self):
         # Create a triangle to represent the player
         player_size = 20
         self._player = pygame.Surface((player_size, player_size))
@@ -63,14 +73,7 @@ class Maze:
         self._background = pygame.Surface((self._cell_width,
                                            self._cell_height))
         self._background.fill(self._bg_color)
-
-        # Initialize fonts
-        pygame.font.init()
-
         self._createWalls()
-        self.setDraw(True)
-        self._generator = MazeGenerator.MazeGenerator()
-        self._trail = False
 
     def _createWalls(self):
         """
@@ -234,8 +237,6 @@ class Maze:
                 self.screen.blit(self._breadcrumb,
                                  (x_coord, y_coord))
 
-                
-
     def _redrawPlayer(self, old_pos):
         if self.screen:
             self._drawBackground(old_pos)
@@ -335,3 +336,13 @@ class Maze:
 
     def setTrail(self, trail):
         self._trail = trail
+
+    def setCellWidth(self, width):
+        self._cell_width = width
+        self._createGraphics()
+        self.draw()
+
+    def setCellHeight(self, height):
+        self._cell_height = height
+        self._createGraphics()
+        self.draw()
