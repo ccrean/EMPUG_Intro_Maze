@@ -41,8 +41,6 @@ class Maze:
 
     def clear(self):
         self.grid = None
-        self.n_rows = 0
-        self.n_cols = 0
         self.start = (0, 0)
         self.finish = (0, 0)
         self.position = (0, 0)
@@ -99,9 +97,6 @@ class Maze:
                self.clear()
                return
 
-        self.n_rows = len(self.grid)
-        self.n_cols = length
-
         # check to make sure that a start and finish point are defined
         if not any(map(lambda x: 'S' in x, self.grid)):
             print "Error: maze does not contain a starting point"
@@ -117,9 +112,9 @@ class Maze:
         if self.show:
             if self.grid:
                 height = (self._cell_height + self._cell_sep) *\
-                    self.n_rows - self._cell_sep
+                    len(self.grid) - self._cell_sep
                 width = (self._cell_width + self._cell_sep) *\
-                    self.n_cols - self._cell_sep
+                    len(self.grid[0]) - self._cell_sep
                 if self.screen == None or \
                         (pygame.display.Info().current_w,
                          pygame.display.Info().current_h) != (width, height):
@@ -182,8 +177,8 @@ class Maze:
         elif self.orientation == 'W':
             pos = self.position[0], self.position[1] - 1
         # Make sure that the player doesn't move off the edge of the map
-        pos = min(max(pos[0], 0), self.n_rows - 1),\
-            min(max(pos[1], 0), self.n_cols - 1)
+        pos = min(max(pos[0], 0), len(self.grid) - 1),\
+            min(max(pos[1], 0), len(self.grid[0]) - 1)
         return pos
 
     def moveForward(self):
@@ -216,9 +211,9 @@ class Maze:
         if self.isFinished():
             font = pygame.font.SysFont('monospace', 30)
             congrats = font.render('You win!', 1, self._font_color)
-            congrats_x = (self._cell_width * self.n_cols -\
+            congrats_x = (self._cell_width * len(self.grid[0]) -\
                               congrats.get_width()) / 2
-            congrats_y = (self._cell_height * self.n_rows -\
+            congrats_y = (self._cell_height * len(self.grid) -\
                               congrats.get_height()) / 2
             self.screen.blit(congrats, (congrats_x, congrats_y))
             pygame.display.update()
@@ -230,6 +225,4 @@ class Maze:
         self.grid[1][0] = 'S'
         self.grid[1][-1] = 'F'
         self.position = (1,0)
-        self.n_rows = 3
-        self.n_cols = length
         self.draw()
