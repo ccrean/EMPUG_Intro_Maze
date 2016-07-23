@@ -1,4 +1,5 @@
 import itertools, StringIO, pygame, random, time
+import MazeGenerator
 
 class Maze:
     directions = ['N', 'E', 'S', 'W']
@@ -42,6 +43,7 @@ class Maze:
 
         self._createWalls()
         self.setDraw(True)
+        self._generator = MazeGenerator.MazeGenerator()
 
     def _createWalls(self):
         """
@@ -286,16 +288,7 @@ class Maze:
 
     def line(self, length):
         self.clear()
-        if length < 1:
-            raise ValueError("length must be >= 1")
-        self.grid = [ [ '' ] * length ]
-        if length > 1:
-            self.grid[0][0] += 'E'
-            self.grid[0][-1] += 'W'
-        for i in range(1, length-1):
-            self.grid[0][i] += 'WE'
-        self.start = (0, 0)
-        self.finish = (0, length - 1)
+        self.grid, self.start, self.finsih = self._generator.line(length)
         self.position = self.start
         self.draw()
 
@@ -304,49 +297,8 @@ class Maze:
         Create a random maze with given dimensions.
         """
         self.clear()
-        self.grid = [ [''] * width for i in range(height) ]
-        random.seed(seed)
-        start = ( random.randint(0, len(self.grid) - 1),
-                  random.randint(0, len(self.grid[0]) - 1)
-                  )
-        visited = set([start])
-        self._createPath(start, visited)
-        self.start = ( random.randint(0, len(self.grid) - 1), 0 )
-        self.finish = ( random.randint(0, len(self.grid) - 1),
-                        len(self.grid[0]) - 1 )
+        self.grid, self.start, self.finish = self._generator.random(width,
+                                                                    height,
+                                                                    seed)
         self.position = self.start
         self.draw()
-
-    def _createPath(self, cell, visited):
-        while True:
-            neighbors = self._getNeighbors(cell, visited)
-            if not neighbors:
-                return
-            next_cell = random.choice(neighbors)
-            direction = self._getRelativeDir(cell, next_cell)
-            self.grid[cell[0]][cell[1]] += direction
-            self.grid[next_cell[0]][next_cell[1]] +=\
-                self.opposite_dir[direction]
-            visited.add(next_cell)
-            self._createPath(next_cell, visited)
-
-    def _getNeighbors(self, cell, visited):
-        potential_neighbors = [ (max(cell[0] - 1, 0), cell[1]),          # above
-                                (min(cell[0] + 1, len(self.grid) - 1), cell[1]),  # below
-                                (cell[0], max(cell[1] - 1, 0)),          # left
-                                (cell[0], min(cell[1] + 1, len(self.grid[0]) - 1))# right
-                                ]
-        neighbors = [ c for c in potential_neighbors if c != cell and c not in visited]
-        return neighbors
-
-    def _getRelativeDir(self, c1, c2):
-        if c2 == (c1[0] + 1, c1[1]):
-            return 'S'
-        elif c2 == (c1[0] - 1, c1[1]):
-            return 'N'
-        elif c2 == (c1[0], c1[1] - 1):
-            return 'W'
-        elif c2 == (c1[0], c1[1] + 1):
-            return 'E'
-        else:
-            raise ValueError('cells are not neighbors')
