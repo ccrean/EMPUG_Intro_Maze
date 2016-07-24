@@ -291,10 +291,8 @@ class Maze:
 
     def pathIsClear(self):
         next_cell = self._getNext()
-        if self.grid[next_cell[0]][next_cell[1]] != 1:
-            return True
-        else:
-            return False
+        cell = self.grid[self.position[0]][self.position[1]]
+        return self.orientation in cell and next_cell != cell
 
     def _checkFinished(self):
         if self.isFinished():

@@ -39,35 +39,43 @@ class MazeTest(unittest.TestCase):
         self.assertEqual(m.position, (1, 0))
         self.assertEqual(m.orientation, 'N')
         
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (1, 0))
 
         m.turnRight()
         self.assertEqual(m.orientation, 'E')
         
+        self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 1))
         
+        self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 2))
         
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (1, 2))
         
         m.turnRight()
         self.assertEqual(m.orientation, 'S')
         
+        self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (2, 2))
         
         m.turnRight()
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (2, 2))
 
         m.turnRight()
+        self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 2))
         
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (1, 2))
         
@@ -79,11 +87,13 @@ class MazeTest(unittest.TestCase):
         m.loadString(self.grid)
         pos = m.position
         m.orientation = 'W'
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, pos)
 
         m.position = (2, 2)
         m.orientation = 'E'
+        self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (2, 2))
 
