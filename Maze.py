@@ -172,7 +172,6 @@ class Maze:
                              "the end point)")
 
         self.position = self.start
-        self._placeBreadcrumb(self.position)
 
     def draw(self):
         if self.show:
@@ -272,6 +271,7 @@ class Maze:
 
     def moveForward(self):
         old_pos = self.position
+        self._placeBreadcrumb(old_pos)
         next_cell = self._getNext()
         if self.orientation in self.grid[old_pos[0]][old_pos[1]] and\
                 next_cell != self.position:
@@ -279,7 +279,6 @@ class Maze:
             moved = True
         else:
             moved = False
-        self._placeBreadcrumb(self.position)
         self._redrawPlayer(old_pos)
         return moved
 
@@ -293,6 +292,9 @@ class Maze:
         next_cell = self._getNext()
         cell = self.grid[self.position[0]][self.position[1]]
         return self.orientation in cell and next_cell != cell
+
+    def wasVisited(self):
+        return '*' in self.grid[self.position[0]][self.position[1]]
 
     def _checkFinished(self):
         if self.isFinished():
@@ -309,7 +311,6 @@ class Maze:
         self.clear()
         self.grid, self.start, self.finish = self._generator.line(length)
         self.position = self.start
-        self._placeBreadcrumb(self.position)
         self.draw()
 
     def random(self, width, height, seed = None):
@@ -321,7 +322,6 @@ class Maze:
                                                                     height,
                                                                     seed)
         self.position = self.start
-        self._placeBreadcrumb(self.position)
         self.draw()
 
     def _placeBreadcrumb(self, position):

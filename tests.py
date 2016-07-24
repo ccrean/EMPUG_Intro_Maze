@@ -38,7 +38,8 @@ class MazeTest(unittest.TestCase):
 
         self.assertEqual(m.position, (1, 0))
         self.assertEqual(m.orientation, 'N')
-        
+
+        self.assertFalse(m.wasVisited())
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (1, 0))
@@ -50,6 +51,16 @@ class MazeTest(unittest.TestCase):
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 1))
         
+        # Turn around and revisit the last cell
+        m.turnRight()
+        m.turnRight()
+        self.assertTrue(m.moveForward())
+        self.assertTrue(m.wasVisited())
+        m.turnRight()
+        m.turnRight()
+        self.assertTrue(m.moveForward())
+        self.assertTrue(m.wasVisited())
+
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (1, 2))
