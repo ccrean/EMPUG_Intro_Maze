@@ -40,6 +40,62 @@ class MazeGenerator:
                    len(self.grid[0]) - 1 )
         return self.grid, start, finish
 
+    def eller(self, width, height, seed = None):
+        """
+        Generates a random maze with the given dimensions using Eller's
+        algorithm.
+
+        The following arguments must be specified:
+        width - the number of cells in each row
+        height - the number of cells in each column
+
+        The following arguments are optional:
+        seed - the seed for the random number generator
+        """
+        random.seed(seed)
+        self.grid = [ [''] * width for i in range(height) ]
+
+        sets = { i: i for i in range(width) } # map cells to sets
+        cells = { i: [ i ] for i in range(width) } # map sets to cells
+        for row in range(height - 1):
+            self._makeConnections(sets, cells, width, False)
+            sets, cells = self._makeDownwardConnections(sets, cells)
+        self._makeConnections(sets, cells, height - 1, width, True)
+
+    def _makeConnections(sets, cells, row, width, last):
+        prob = 0.5
+        if not last:
+            for c in range(width - 1):
+                if sets[c] != sets[c+1] and\
+                        self._randomWithProb(prob):
+                    self._merge(sets, cells, c, c+1)
+
+    def _makeDownwardConnections(cells, width):
+        prob = 0.3
+        first_set = max(cells.keys()) + 1
+        new_sets = { i: first_set + i for i in range(width) }
+        new_cells = { first_set + i: [ i ] for i in range(width) }
+        for s, c_list in cells:
+            used = []
+            c = random.choice(c_list)
+            new_sets[c] = s
+            new_cells[s].append(c)
+
+    def _merge(sets, cells, c1, c2):
+        s1 = sets[c1]
+        s2 = sets[c2]
+        for c in cells[s2]:
+            sets[c] = s1
+            cells[s1].append(c)
+        del cells[s2]
+
+    def _randomWithProb(prob):
+        """
+        Returns True with probability prob, and False with probability
+        1 - prob.
+        """
+        return random.random() < prob
+                
     def _createPath(self, cell, visited):
         while True:
             neighbors = self._getNeighbors(cell, visited)
