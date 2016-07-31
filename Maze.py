@@ -32,18 +32,9 @@ class Maze:
         self._trail = False
 
     def _createGraphics(self):
-        # Create a triangle to represent the player
-        self._player = pygame.Surface((self._cell_width,
-                                       self._cell_height))
-        # Give the player image a transparent background
-        transparent_color = pygame.Color(255, 0, 255)
-        self._player.fill(transparent_color)
-        self._player.set_colorkey(transparent_color)
-        pygame.draw.polygon(self._player, self._player_color,
-                            ((1, self._cell_height - 1),
-                             (self._cell_width - 1, self._cell_height - 1),
-                             (self._cell_width / 2, 1)))
+        self._createPlayer()
 
+        transparent_color = pygame.Color(255, 0, 255)
         # Create an image to represent cells that the player has already
         # traveled through
         self._breadcrumb = pygame.Surface((self._cell_width,
@@ -69,6 +60,20 @@ class Maze:
                                            self._cell_height))
         self._background.fill(self._bg_color)
         self._createWalls()
+
+    def _createPlayer(self):
+        # Create a triangle to represent the player
+        self._player = pygame.Surface((self._cell_width,
+                                       self._cell_height))
+        
+        # Give the player image a transparent background
+        transparent_color = pygame.Color(255, 0, 255)
+        self._player.fill(transparent_color)
+        self._player.set_colorkey(transparent_color)
+        pygame.draw.polygon(self._player, self._player_color,
+                            ((1, self._cell_height - 1),
+                             (self._cell_width - 1, self._cell_height - 1),
+                             (self._cell_width / 2, 1)))
 
     def _createWalls(self):
         """
@@ -112,6 +117,11 @@ class Maze:
         self.start = None
         self.finish = None
         self.position = (0, 0)
+
+        # Re-create the player icon, to get it facing in the right
+        # direction
+        self._createPlayer()
+        
         self.dirs = itertools.cycle(self.directions)
         self.orientation = self.dirs.next()
 
