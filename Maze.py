@@ -252,6 +252,11 @@ class Maze:
                                               self._cell_sep
             self.screen.blit(self._player, (x_coord, y_coord))
             self._checkFinished()
+            
+            # Need to do this to stop the pygame window from freezing
+            # on Windows
+            pygame.event.pump()
+            
             pygame.display.update()
 
     def turnRight(self):
