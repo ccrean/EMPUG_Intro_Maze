@@ -38,6 +38,8 @@ class MazeGenerator:
         start = ( random.randint(0, len(self.grid) - 1), 0 )
         finish = ( random.randint(0, len(self.grid) - 1),
                    len(self.grid[0]) - 1 )
+        self.grid[start[0]][start[1]] += '^'
+        self.grid[finish[0]][finish[1]] += '$'
         return self.grid, start, finish
 
     def _createPath(self, cell, visited):
