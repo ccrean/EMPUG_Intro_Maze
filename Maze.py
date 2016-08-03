@@ -358,3 +358,6 @@ class Maze:
                     for cell in row:
                         output_file.write(cell + ' ')
                     output_file.write('\n')
+
+    def screenshot(self, filename):
+        pygame.image.save(self.screen, filename)
