@@ -1,4 +1,4 @@
-import unittest, StringIO, sys, os, pygame, cv2
+import unittest, StringIO, sys, os, pygame, cv2, filecmp
 sys.path.append('..')
 import Maze
 
@@ -168,6 +168,20 @@ class MazeTest(unittest.TestCase):
         img_ref = cv2.imread(input_file)
         img_test = cv2.imread(output_file)
         self.assertTrue((img_ref == img_test).all())
+
+    def testSave(self):
+        """
+        Test the save method.
+        """
+        filename = 'test_maze.txt'
+        output_file = os.path.join('output', filename)
+
+        m = Maze.Maze()
+        m.setDraw(False)
+        m.load(filename)
+        m.save(output_file)
+
+        self.assertTrue(filecmp.cmp(filename, output_file))
 
 if __name__ == '__main__':
     unittest.main()
