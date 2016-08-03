@@ -182,6 +182,7 @@ class Maze:
                              "the end point)")
 
         self.position = self.start
+        self.draw()
 
     def draw(self):
         if self.show:
