@@ -2,12 +2,7 @@ import itertools, StringIO, pygame, random, time
 import MazeGenerator
 
 class Maze:
-    directions = ['N', 'E', 'S', 'W']
-    opposite_dir = { 'N': 'S',
-                     'E': 'W',
-                     'S': 'N',
-                     'W': 'E'
-                     }
+    _directions = ['N', 'E', 'S', 'W']
     _cell_width = 20
     _cell_height = 20
     _cell_sep = 1
@@ -122,7 +117,7 @@ class Maze:
         # direction
         self._createPlayer()
         
-        self.dirs = itertools.cycle(self.directions)
+        self.dirs = itertools.cycle(self._directions)
         self.orientation = self.dirs.next()
 
     def setDraw(self, s):
@@ -251,7 +246,7 @@ class Maze:
         self._redrawPlayer(self.position)
 
     def turnLeft(self):
-        for i in range(len(self.directions) - 1):
+        for i in range(len(self._directions) - 1):
             self.orientation = self.dirs.next()
         self._player = pygame.transform.rotate(self._player, 90)
         self._redrawPlayer(self.position)
