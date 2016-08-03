@@ -1,4 +1,4 @@
-import unittest, StringIO, sys
+import unittest, StringIO, sys, os, pygame, cv2
 sys.path.append('..')
 import Maze
 
@@ -119,6 +119,38 @@ class MazeTest(unittest.TestCase):
                 self.assertTrue(m.moveForward())
             self.assertTrue(m.isFinished())
             self.assertFalse(m.moveForward())
+
+    def testDraw(self):
+        """
+        Test the maze drawing methods.
+        """
+        input_dir = 'images'
+        output_dir = 'output'
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        composite_command = ['compare', '-compose', 'src']
+
+        m = Maze.Maze()
+        m.setDraw(True)
+        m.load('test_maze.txt')
+
+        for direction in ['N', 'E', 'S', 'W']:
+            filename = 'maze_{}.png'.format(direction)
+            output_image = os.path.join(output_dir, filename)
+            input_image = os.path.join(input_dir, filename)
+            compare_image = os.path.join(output_dir,
+                                         'cmp_' + filename)
+            print input_image, output_image, compare_image
+
+            m.screenshot(output_image)
+
+            # Perform a pixel-by-pixel comparison of the two images
+            img_ref = cv2.imread(input_image)
+            img_test = cv2.imread(output_image)
+            self.assertTrue((img_ref == img_test).all())
+
+            m.turnRight()
 
 if __name__ == '__main__':
     unittest.main()
