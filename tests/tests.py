@@ -139,9 +139,6 @@ class MazeTest(unittest.TestCase):
             filename = 'maze_{}.png'.format(direction)
             output_image = os.path.join(output_dir, filename)
             input_image = os.path.join(input_dir, filename)
-            compare_image = os.path.join(output_dir,
-                                         'cmp_' + filename)
-            print input_image, output_image, compare_image
 
             m.screenshot(output_image)
 
@@ -151,6 +148,26 @@ class MazeTest(unittest.TestCase):
             self.assertTrue((img_ref == img_test).all())
 
             m.turnRight()
+
+    def testResize(self):
+        """
+        Test the methods for resizing the maze.
+        """
+        filename = 'maze_large.png'
+        input_file = os.path.join('images', filename)
+        output_file = os.path.join('output', filename)
+
+        m = Maze.Maze()
+        m.setDraw(True)
+        m.load('test_maze.txt')
+
+        m.setCellWidth(50)
+        m.setCellHeight(50)
+        m.screenshot(output_file)
+
+        img_ref = cv2.imread(input_file)
+        img_test = cv2.imread(output_file)
+        self.assertTrue((img_ref == img_test).all())
 
 if __name__ == '__main__':
     unittest.main()
