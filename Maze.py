@@ -354,3 +354,11 @@ class Maze:
         self._cell_height = height
         self._createGraphics()
         self.draw()
+
+    def save(self, filename):
+        with open(filename, 'w') as output_file:
+            if self.grid:
+                for row in self.grid:
+                    for cell in row:
+                        output_file.write(cell + ' ')
+                    output_file.write('\n')
