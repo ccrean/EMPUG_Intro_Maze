@@ -1,12 +1,10 @@
-import unittest
+import unittest, StringIO, sys
+sys.path.append('..')
 import Maze
-import StringIO
+
 import IPython
 
 class MazeTest(unittest.TestCase):
-
-    # grid = "1 1 1 1 1 1 1 1\nS 0 0 1 0 0 0 1\n1 1 0 1 0 1 1 1\n1 0 0 0 0 1 0 F\n1 0 1 1 0 1 0 1\n1 0 0 1 0 1 0 1\n1 1 0 1 0 0 0 1\n1 1 1 1 1 1 1 1"
-    grid = "E WES W$\nE^ WENS WS\nE WN N"
 
     def testTurn(self):
         m = Maze.Maze()
@@ -32,24 +30,23 @@ class MazeTest(unittest.TestCase):
 
     def testMove(self):
         m = Maze.Maze()
-        m.loadString(self.grid)
         m.setDraw(False)
-        # IPython.embed()
+        m.load('test_maze.txt')
 
-        self.assertEqual(m.position, (1, 0))
+        self.assertEqual(m.position, (0, 0))
         self.assertEqual(m.orientation, 'N')
 
         self.assertFalse(m.wasVisited())
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (1, 0))
+        self.assertEqual(m.position, (0, 0))
 
         m.turnRight()
         self.assertEqual(m.orientation, 'E')
         
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (1, 1))
+        self.assertEqual(m.position, (0, 1))
         
         # Turn around and revisit the last cell
         m.turnRight()
@@ -63,50 +60,46 @@ class MazeTest(unittest.TestCase):
 
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (1, 2))
-        
-        self.assertFalse(m.pathIsClear())
-        self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (1, 2))
+        self.assertEqual(m.position, (0, 2))
         
         m.turnRight()
         self.assertEqual(m.orientation, 'S')
         
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
+        self.assertEqual(m.position, (1, 2))
+
+        self.assertTrue(m.pathIsClear())
+        self.assertTrue(m.moveForward())
         self.assertEqual(m.position, (2, 2))
-        
-        m.turnRight()
+
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, (2, 2))
+        
+        m.turnLeft()
+        self.assertTrue(m.pathIsClear())
+        self.assertTrue(m.moveForward())
+        self.assertEqual(m.position, (2, 3))
 
         m.turnRight()
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (1, 2))
+        self.assertEqual(m.position, (3, 3))
         
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (1, 2))
-        
-        m.turnLeft()
-        self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (1, 1))
+        self.assertEqual(m.position, (3, 3))
 
         # Make sure that the player can't move off the edge of the map
-        m.loadString(self.grid)
+        m.load('test_maze.txt')
         pos = m.position
-        m.orientation = 'W'
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
         self.assertEqual(m.position, pos)
 
-        m.position = (2, 2)
-        m.orientation = 'E'
-        self.assertFalse(m.pathIsClear())
-        self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (2, 2))
+        m.position = m.finish
+        self.assertTrue(m.isFinished())
 
     def testLine(self):
         """
