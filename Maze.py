@@ -14,6 +14,9 @@ class Maze:
     _end_color = pygame.Color(0, 0, 255)
 
     def __init__(self):
+        """
+        Create a new, empty maze.
+        """
         self.clear()
         self.screen = None
 
@@ -27,6 +30,10 @@ class Maze:
         self._trail = False
 
     def _createGraphics(self):
+        """
+        Create the graphics objects that will be assembled into the full
+        maze image.  Should be called every time the maze is resized.
+        """
         self._createPlayer()
 
         transparent_color = pygame.Color(255, 0, 255)
@@ -57,7 +64,10 @@ class Maze:
         self._createWalls()
 
     def _createPlayer(self):
-        # Create a triangle to represent the player
+        """
+        Create a triangle image to represent the player.  By default, the
+        player will be facing north.
+        """
         self._player = pygame.Surface((self._cell_width,
                                        self._cell_height))
         
@@ -97,6 +107,10 @@ class Maze:
                          bottom_right_corner, bottom_left_corner)
 
     def _getTransparentCell(self):
+        """
+        Returns a transparent cell of the current size specified by the
+        maze's _cell_width and _cell_height properties.
+        """
         transparent_color = pygame.Color(255, 0, 255)
         cell = pygame.Surface((self._cell_width + 2 * self._cell_sep,
                                self._cell_height + 2 * self._cell_sep))
@@ -108,6 +122,9 @@ class Maze:
         pygame.quit()
 
     def clear(self):
+        """
+        Return the maze to its initial (empty) state.
+        """
         self.grid = None
         self.start = None
         self.finish = None
@@ -121,9 +138,24 @@ class Maze:
         self.orientation = self.dirs.next()
 
     def setDraw(self, s):
+        """
+        Turn the maze graphics on or off.
+
+        Args:
+        s (boolean): If s is True, the graphics will be redrawn each
+                     time the player makes a change to the maze.  If s
+                     is False, the maze will not be redrawn.
+        """
         self.show = s
 
     def load(self, filename):
+        """
+        Load a maze from a text file.
+
+        Args:
+        filename (string): The name of the text file containing a
+                           description of the maze.
+        """
         f = open(filename)
         if not f:
             print "Cannot find" + filename
@@ -131,6 +163,13 @@ class Maze:
         f.close()
 
     def _load(self, f):
+        """
+        Does the actual work of loading the maze.
+
+        Args:
+        f (file object): The file object containing the description of the
+                         maze.
+        """
         self.clear()
         self.grid = []
         for row_no, line in enumerate(f):
@@ -165,6 +204,9 @@ class Maze:
         self.draw()
 
     def draw(self):
+        """
+        Redraw the maze.
+        """
         if self.show:
             if self.grid:
                 # Size of screen
@@ -201,6 +243,14 @@ class Maze:
                 self._checkFinished()
 
     def _drawBackground(self, pos):
+        """
+        Fill in the cell specified by pos with the background color.
+        Should be called on a cell anytime the player moves out of
+        that cell.
+        
+        Args:
+        pos (tuple): (row, column) of the cell that is to be filled in.
+        """
         if self.show and self.screen:
             row_no = pos[0]
             col_no = pos[1]
@@ -223,6 +273,13 @@ class Maze:
                                  (x_coord, y_coord))
 
     def _redrawPlayer(self, old_pos):
+        """
+        Redraw the player icon after it has moved.
+
+        Args:
+        old_pos (tuple): (row, column) of the cell previously occupied by
+                         the player.
+        """
         if self.screen:
             self._drawBackground(old_pos)
             x_coord = self.position[1] * (self._cell_height +\
@@ -241,17 +298,29 @@ class Maze:
             pygame.display.update()
 
     def turnRight(self):
+        """
+        Turn the player to the right (clockwise).
+        """
         self.orientation = self.dirs.next()
         self._player = pygame.transform.rotate(self._player, -90)
         self._redrawPlayer(self.position)
 
     def turnLeft(self):
+        """
+        Turn the player to the left (counter-clockwise).
+        """
         for i in range(len(self._directions) - 1):
             self.orientation = self.dirs.next()
         self._player = pygame.transform.rotate(self._player, 90)
         self._redrawPlayer(self.position)
 
     def _getNext(self):
+        """
+        Returns the (row, column) tuple that locates the cell in front
+        of the player, taking into account the player's orientation.
+        Does not consider whether or not there is a wall in the way --
+        the calling function must do that.
+        """
         if self.orientation == 'N':
             pos = self.position[0] - 1, self.position[1]
         elif self.orientation == 'E':
@@ -266,6 +335,15 @@ class Maze:
         return pos
 
     def moveForward(self):
+        """
+        Move the player, if possible, to the next cell.
+
+        Returns:
+        True if the player was able to move forward (there was no wall
+        in the way).
+        False if the player was not able to move forward (there was a
+        wall in the way).
+        """
         old_pos = self.position
         self._placeBreadcrumb(old_pos)
         next_cell = self._getNext()
@@ -279,20 +357,36 @@ class Maze:
         return moved
 
     def isFinished(self):
+        """
+        Returns True if the player is standing on the end square,
+        False otherwise.
+        """
         if self.grid:
             if self.position == self.finish:
                 return True
         return False
 
     def pathIsClear(self):
+        """
+        Returns True if the player can move forward (there is no wall
+        in the way), False otherwise.
+        """
         next_cell = self._getNext()
         cell = self.grid[self.position[0]][self.position[1]]
         return self.orientation in cell and next_cell != cell
 
     def wasVisited(self):
+        """
+        Returns True if the player previously visited the cell in
+        which he/she is currently located, False otherwise.
+        """
         return '*' in self.grid[self.position[0]][self.position[1]]
 
     def _checkFinished(self):
+        """
+        Prints a message congratulating the player if he/she is standing on
+        the end square.
+        """
         if self.isFinished():
             font = pygame.font.SysFont('monospace', 30)
             congrats = font.render('You win!', 1, self._font_color)
@@ -304,6 +398,12 @@ class Maze:
             pygame.display.update()
 
     def line(self, length):
+        """
+        Generates a straight-line maze.
+        
+        Args:
+        length (int): The length (number of cells) of the maze.
+        """
         self.clear()
         self.grid, self.start, self.finish = self._generator.line(length)
         self.position = self.start
@@ -312,6 +412,12 @@ class Maze:
     def random(self, width, height, seed = None):
         """
         Create a random maze with given dimensions.
+
+        Args:
+        width (int): The width of the maze (number of cells).
+        height (int): The height of the maze (number of cells).
+        seed (int) (optional): The seed for the random number
+        generator.  If not specified, defaults to time.time().
         """
         self.clear()
         self.grid, self.start, self.finish = self._generator.random(width,
@@ -321,22 +427,55 @@ class Maze:
         self.draw()
 
     def _placeBreadcrumb(self, position):
+        """
+        Place a "breadcrumb" in the current cell to indicate that the
+        player has visited it.
+        """
         self.grid[position[0]][position[1]] += '*'
 
     def setTrail(self, trail):
+        """
+        Turns on/off the markers that indicate the cells that have already
+        been visited.
+
+        Args: 
+        trail (boolean): If trail is True, the markers will be turned
+                         on.  If trail is False, they will be turned
+                         off.
+        """
         self._trail = trail
 
     def setCellWidth(self, width):
+        """
+        Sets the width of the cells.
+
+        Args:
+        width (int): Width of the cells (in pixels).
+        """
         self._cell_width = width
         self._createGraphics()
         self.draw()
 
     def setCellHeight(self, height):
+        """
+        Sets the height of the cells.
+        
+        Args:
+        height (int): Height of the cells (in pixels).
+        """
         self._cell_height = height
         self._createGraphics()
         self.draw()
 
     def save(self, filename):
+        """
+        Save the maze to a text file, which can be loaded later using
+        the load method.
+
+        Args:
+        filename (string): The name of the file to which the maze
+                           should be saved.
+        """
         with open(filename, 'w') as output_file:
             if self.grid:
                 for row in self.grid:
@@ -345,4 +484,11 @@ class Maze:
                     output_file.write('\n')
 
     def screenshot(self, filename):
+        """
+        Save a screenshot of the maze.
+
+        Args:
+        filename (string): The file to which the screenshot should be
+                           saved.
+        """
         pygame.image.save(self.screen, filename)
