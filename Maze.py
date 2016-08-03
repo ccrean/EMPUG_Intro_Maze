@@ -138,11 +138,6 @@ class Maze:
         elif self.orientation == 'W':
             return '<'
 
-    def loadString(self, s):
-        s = StringIO.StringIO(s)
-        self._load(s)
-        s.close()
-
     def load(self, filename):
         f = open(filename)
         if not f:
