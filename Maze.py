@@ -128,16 +128,6 @@ class Maze:
     def setDraw(self, s):
         self.show = s
 
-    def _getDirArrow(self):
-        if self.orientation == 'N':
-            return '^'
-        elif self.orientation == 'E':
-            return '>'
-        elif self.orientation == 'S':
-            return 'v'
-        elif self.orientation == 'W':
-            return '<'
-
     def load(self, filename):
         f = open(filename)
         if not f:
