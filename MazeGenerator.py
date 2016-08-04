@@ -1,4 +1,5 @@
-import random
+import random, math
+import IPython
 
 class MazeGenerator:
     directions = ['N', 'E', 'S', 'W']
@@ -23,6 +24,52 @@ class MazeGenerator:
         start = (0, 0)
         finish = (0, length - 1)
         return self.grid, start, finish
+
+    def spiral(self, width, height):
+        """
+        Generates a spiral maze.
+        
+        Args:
+        width (int): The width of the maze (number of cells).
+        height (int): The height of the maze (number of cells).
+        """
+        grid = [ [''] * width for i in range(height) ]
+        n_layers = int(min(math.ceil(height / 2.0),
+                           math.ceil(width / 2.0)))
+        for layer in range(n_layers):
+            # Carve the first row
+            start_col = max(1, layer)
+            row = layer
+            for col in range(start_col, width - layer):
+                grid[row][col-1] += 'E'
+                grid[row][col] += 'W'
+
+            # Carve the last column
+            col = width - layer - 1
+            for row in range(layer + 1, height - layer):
+                grid[row-1][col] += 'S'
+                grid[row][col] += 'N'
+
+            # Carve the last row
+            if height % 2 == 0 or layer < n_layers - 1:
+                start_col = width - layer - 2
+                for col in range(width - layer - 2, layer - 1, -1):
+                    row = height - layer - 1
+                    grid[row][col+1] += 'W'
+                    grid[row][col] += 'E'
+            
+            # Carve the first column
+            if width % 2 == 0 or layer < n_layers - 1:
+                for row in range(height - layer - 2, layer, -1):
+                    col = layer
+                    grid[row+1][col] += 'N'
+                    grid[row][col] += 'S'
+            
+        start = (0, 0)
+        end = (row, col)
+        grid[start[0]][start[1]] += '^'
+        grid[end[0]][end[1]] += '$'
+        return grid, start, end
 
     def random(self, width, height, seed = None):
         """

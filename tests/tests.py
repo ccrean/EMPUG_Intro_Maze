@@ -183,5 +183,47 @@ class MazeTest(unittest.TestCase):
 
         self.assertTrue(filecmp.cmp(filename, output_file))
 
+    def testSpiral(self):
+        """
+        Test the spiral maze generation.
+        """
+        m = Maze.Maze()
+        
+        m.spiral(1, 1)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (0, 0))
+
+        m.spiral(10, 1)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (0, 9))
+
+        m.spiral(10, 2)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (1, 0))
+
+        m.spiral(10, 3)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (1, 8))
+
+        m.spiral(10, 4)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (2, 1))
+        
+        m.spiral(3, 4)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (2, 1))
+
+        m.spiral(4, 4)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (2, 1))
+
+        m.spiral(3, 10)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (8, 1))
+
+        m.spiral(4, 10)
+        self.assertEqual(m.start, (0, 0))
+        self.assertEqual(m.finish, (2, 1))
+
 if __name__ == '__main__':
     unittest.main()

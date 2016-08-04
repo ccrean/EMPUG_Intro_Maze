@@ -409,6 +409,20 @@ class Maze:
         self.position = self.start
         self.draw()
 
+    def spiral(self, width, height):
+        """
+        Generates a spiral maze.
+        
+        Args:
+        width (int): The width of the maze (number of cells).
+        height (int): The height of the maze (number of cells).
+        """
+        self.clear()
+        self.grid, self.start, self.finish =\
+            self._generator.spiral(width, height)
+        self.position = self.start
+        self.draw()
+
     def random(self, width, height, seed = None):
         """
         Create a random maze with given dimensions.
