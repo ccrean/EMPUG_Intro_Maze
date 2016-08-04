@@ -506,3 +506,17 @@ class Maze:
                            saved.
         """
         pygame.image.save(self.screen, filename)
+
+    def getStart(self):
+        """
+        Returns the (row, column) tuple for the starting point of the
+        maze.
+        """
+        return self.start
+
+    def getFinish(self):
+        """
+        Returns the (row, column) tuple for the ending point of the
+        maze.
+        """
+        return self.finish
