@@ -43,6 +43,7 @@ class Maze:
         terminates.  None of the maze's methods should be called after
         calling close.
         """
+        self.clear()
         self._killPump.set()
         self._continuePump.set()
         self._pump.join()
@@ -155,6 +156,9 @@ class Maze:
         
         self._dirs = itertools.cycle(self._directions)
         self._orientation = self._dirs.next()
+
+        self._screen = None
+        pygame.display.quit()
 
     def setDraw(self, s):
         """

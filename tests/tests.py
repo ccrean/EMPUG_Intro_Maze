@@ -2,8 +2,6 @@ import unittest, StringIO, sys, os, pygame, cv2, filecmp
 sys.path.append('..')
 import Maze
 
-import IPython
-
 class MazeTest(unittest.TestCase):
 
     def testTurn(self):
@@ -200,6 +198,7 @@ class MazeTest(unittest.TestCase):
         Test the spiral maze generation.
         """
         m = Maze.Maze()
+        m.setDraw(False)
         
         m.spiral(1, 1)
         self.assertEqual(m.getStart(), (0, 0))
@@ -220,7 +219,7 @@ class MazeTest(unittest.TestCase):
         m.spiral(10, 4)
         self.assertEqual(m.getStart(), (0, 0))
         self.assertEqual(m.getFinish(), (2, 1))
-        
+       
         m.spiral(3, 4)
         self.assertEqual(m.getStart(), (0, 0))
         self.assertEqual(m.getFinish(), (2, 1))
@@ -273,6 +272,8 @@ class MazeTest(unittest.TestCase):
         img_ref = cv2.imread(input_off)
         img_test = cv2.imread(output_off)
         self.assertTrue((img_ref == img_test).all())
+
+        m.close()
 
 if __name__ == '__main__':
     unittest.main()
