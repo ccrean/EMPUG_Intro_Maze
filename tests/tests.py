@@ -28,6 +28,8 @@ class MazeTest(unittest.TestCase):
         m.turnLeft()
         self.assertEqual(m.getOrientation(), 'N')
 
+        m.close()
+
     def testMove(self):
         m = Maze.Maze()
         m.setDraw(False)
@@ -101,6 +103,8 @@ class MazeTest(unittest.TestCase):
         m._position = m.getFinish()
         self.assertTrue(m.isFinished())
 
+        m.close()
+
     def testLine(self):
         """
         Test method for generating straight-line mazes.
@@ -119,6 +123,8 @@ class MazeTest(unittest.TestCase):
                 self.assertTrue(m.moveForward())
             self.assertTrue(m.isFinished())
             self.assertFalse(m.moveForward())
+
+        m.close()
 
     def testDraw(self):
         """
@@ -149,6 +155,8 @@ class MazeTest(unittest.TestCase):
 
             m.turnRight()
 
+        m.close()
+
     def testResize(self):
         """
         Test the methods for resizing the maze.
@@ -169,6 +177,8 @@ class MazeTest(unittest.TestCase):
         img_test = cv2.imread(output_file)
         self.assertTrue((img_ref == img_test).all())
 
+        m.close()
+
     def testSave(self):
         """
         Test the save method.
@@ -182,6 +192,8 @@ class MazeTest(unittest.TestCase):
         m.save(output_file)
 
         self.assertTrue(filecmp.cmp(filename, output_file))
+
+        m.close()
 
     def testSpiral(self):
         """
@@ -224,6 +236,8 @@ class MazeTest(unittest.TestCase):
         m.spiral(4, 10)
         self.assertEqual(m.getStart(), (0, 0))
         self.assertEqual(m.getFinish(), (2, 1))
+
+        m.close()
 
 if __name__ == '__main__':
     unittest.main()
