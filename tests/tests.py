@@ -239,5 +239,40 @@ class MazeTest(unittest.TestCase):
 
         m.close()
 
+    def testTrail(self):
+        m = Maze.Maze()
+        m.load('test_maze.txt')
+        
+        m.setTrail(False)
+
+        m.turnRight()
+        m.moveForward()
+        m.moveForward()
+        m.turnRight()
+        m.moveForward()
+        m.moveForward()
+        m.turnLeft()
+        m.moveForward()
+        m.turnRight()
+        m.moveForward()
+
+        m.setTrail(True)
+        output_on = os.path.join('output', 'maze_trail_on.png')
+        m.screenshot(output_on)
+
+        m.setTrail(False)
+        output_off = os.path.join('output', 'maze_trail_off.png')
+        m.screenshot(output_off)
+
+        input_on = os.path.join('images', 'maze_trail_on.png')
+        img_ref = cv2.imread(input_on)
+        img_test = cv2.imread(output_on)
+        self.assertTrue((img_ref == img_test).all())
+
+        input_off = os.path.join('images', 'maze_trail_off.png')
+        img_ref = cv2.imread(input_off)
+        img_test = cv2.imread(output_off)
+        self.assertTrue((img_ref == img_test).all())
+
 if __name__ == '__main__':
     unittest.main()

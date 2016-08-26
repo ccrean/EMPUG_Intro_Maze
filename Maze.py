@@ -480,6 +480,7 @@ class Maze:
                          off.
         """
         self._trail = trail
+        self.draw()
 
     def setCellWidth(self, width):
         """
