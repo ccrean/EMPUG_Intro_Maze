@@ -18,7 +18,7 @@ class Maze:
         Create a new, empty maze.
         """
         # Create a new thread to call pygame.event.pump()
-        self._killPump = False
+        self._killPump = threading.Event()
         self._continuePump = threading.Event()
         self._continuePump.clear()
         self._pump = threading.Thread(target=self._pumpEvent)
@@ -40,7 +40,8 @@ class Maze:
 
     def close(self):
         print "Deleting maze"
-        self._killPump = True
+        self._killPump.set()
+        self._continuePump.set()
         self._pump.join()
 
     def _createGraphics(self):
@@ -551,6 +552,6 @@ class Maze:
         """
         while True:
             self._continuePump.wait()
-            if self._killPump:
+            if self._killPump.isSet():
                 break
             pygame.event.pump()
