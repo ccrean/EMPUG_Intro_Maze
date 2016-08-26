@@ -24,7 +24,6 @@ class Maze:
         self._pump = threading.Thread(target=self._pumpEvent)
         self._pump.daemon = True
         self._pump.start()
-        print "Creating new maze"
 
         self.clear()
         self._screen = None
@@ -39,7 +38,11 @@ class Maze:
         self._trail = False
 
     def close(self):
-        print "Deleting maze"
+        """
+        Close the maze.  Should be called before the program
+        terminates.  None of the maze's methods should be called after
+        calling close.
+        """
         self._killPump.set()
         self._continuePump.set()
         self._pump.join()
