@@ -519,3 +519,9 @@ class Maze:
         maze.
         """
         return self._finish
+
+    def getPosition(self):
+        return self._position
+
+    def getOrientation(self):
+        return self._orientation

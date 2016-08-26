@@ -9,44 +9,44 @@ class MazeTest(unittest.TestCase):
     def testTurn(self):
         m = Maze.Maze()
 
-        self.assertEqual(m.orientation, 'N')
+        self.assertEqual(m.getOrientation(), 'N')
         m.turnRight()
-        self.assertEqual(m.orientation, 'E')
+        self.assertEqual(m.getOrientation(), 'E')
         m.turnRight()
-        self.assertEqual(m.orientation, 'S')
+        self.assertEqual(m.getOrientation(), 'S')
         m.turnRight()
-        self.assertEqual(m.orientation, 'W')
+        self.assertEqual(m.getOrientation(), 'W')
         m.turnRight()
-        self.assertEqual(m.orientation, 'N')
+        self.assertEqual(m.getOrientation(), 'N')
 
         m.turnLeft()
-        self.assertEqual(m.orientation, 'W')
+        self.assertEqual(m.getOrientation(), 'W')
         m.turnLeft()
-        self.assertEqual(m.orientation, 'S')
+        self.assertEqual(m.getOrientation(), 'S')
         m.turnLeft()
-        self.assertEqual(m.orientation, 'E')
+        self.assertEqual(m.getOrientation(), 'E')
         m.turnLeft()
-        self.assertEqual(m.orientation, 'N')
+        self.assertEqual(m.getOrientation(), 'N')
 
     def testMove(self):
         m = Maze.Maze()
         m.setDraw(False)
         m.load('test_maze.txt')
 
-        self.assertEqual(m.position, (0, 0))
-        self.assertEqual(m.orientation, 'N')
+        self.assertEqual(m.getPosition(), (0, 0))
+        self.assertEqual(m.getOrientation(), 'N')
 
         self.assertFalse(m.wasVisited())
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (0, 0))
+        self.assertEqual(m.getPosition(), (0, 0))
 
         m.turnRight()
-        self.assertEqual(m.orientation, 'E')
+        self.assertEqual(m.getOrientation(), 'E')
         
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (0, 1))
+        self.assertEqual(m.getPosition(), (0, 1))
         
         # Turn around and revisit the last cell
         m.turnRight()
@@ -60,45 +60,45 @@ class MazeTest(unittest.TestCase):
 
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (0, 2))
+        self.assertEqual(m.getPosition(), (0, 2))
         
         m.turnRight()
-        self.assertEqual(m.orientation, 'S')
+        self.assertEqual(m.getOrientation(), 'S')
         
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (1, 2))
+        self.assertEqual(m.getPosition(), (1, 2))
 
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (2, 2))
+        self.assertEqual(m.getPosition(), (2, 2))
 
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (2, 2))
+        self.assertEqual(m.getPosition(), (2, 2))
         
         m.turnLeft()
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (2, 3))
+        self.assertEqual(m.getPosition(), (2, 3))
 
         m.turnRight()
         self.assertTrue(m.pathIsClear())
         self.assertTrue(m.moveForward())
-        self.assertEqual(m.position, (3, 3))
+        self.assertEqual(m.getPosition(), (3, 3))
         
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, (3, 3))
+        self.assertEqual(m.getPosition(), (3, 3))
 
         # Make sure that the player can't move off the edge of the map
         m.load('test_maze.txt')
-        pos = m.position
+        pos = m.getPosition()
         self.assertFalse(m.pathIsClear())
         self.assertFalse(m.moveForward())
-        self.assertEqual(m.position, pos)
+        self.assertEqual(m.getPosition(), pos)
 
-        m.position = m.getFinish()
+        m._position = m.getFinish()
         self.assertTrue(m.isFinished())
 
     def testLine(self):
