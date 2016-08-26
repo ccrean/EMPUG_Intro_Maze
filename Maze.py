@@ -17,7 +17,15 @@ class Maze:
         """
         Create a new, empty maze.
         """
+        # Create a new thread to call pygame.event.pump()
+        self._killPump = False
+        self._continuePump = threading.Event()
+        self._continuePump.clear()
+        self._pump = threading.Thread(target=self._pumpEvent)
+        self._pump.daemon = True
+        self._pump.start()
         print "Creating new maze"
+
         self.clear()
         self._screen = None
 
@@ -29,13 +37,6 @@ class Maze:
         self.setDraw(True)
         self._generator = MazeGenerator.MazeGenerator()
         self._trail = False
-        
-        self._killPump = False
-        self._continuePump = threading.Event()
-        self._continuePump.set()
-        self._pump = threading.Thread(target=self._pumpEvent)
-        self._pump.daemon = True
-        self._pump.start()
 
     def close(self):
         print "Deleting maze"
@@ -138,6 +139,7 @@ class Maze:
         """
         Return the maze to its initial (empty) state.
         """
+        self._continuePump.clear()
         self._grid = None
         self._start = None
         self._finish = None
@@ -254,6 +256,7 @@ class Maze:
                 self._redrawPlayer(self._position)
                 pygame.display.update()
                 self._checkFinished()
+        self._continuePump.set()
 
     def _drawBackground(self, pos):
         """
@@ -540,17 +543,14 @@ class Maze:
         return self._orientation
 
     def _pumpEvent(self):
+        """
+        Call pygame.event.pump() in an infinite loop.  Necessary to
+        prevent the pygame window from freezing on Windows, and also
+        to prevent the window from being erased when it is obscured by
+        another window.
+        """
         while True:
             self._continuePump.wait()
             if self._killPump:
                 break
-            if self._screen:
-                pygame.event.pump()
-
-def pumpEvent(weak_maze):
-    maze = weak_maze()
-    while True:
-        if maze._killPump.isSet():
-            break
-        if maze._screen:
             pygame.event.pump()
