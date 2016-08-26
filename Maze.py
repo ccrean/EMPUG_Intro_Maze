@@ -228,6 +228,9 @@ class Maze:
         """
         if self._show:
             if self._grid:
+                # Pause pumping until we're done redrawing
+                self._continuePump.clear()
+                
                 # Size of screen
                 height = (self._cell_height + self._cell_sep) *\
                     len(self._grid) + self._cell_sep
@@ -260,7 +263,7 @@ class Maze:
                 self._redrawPlayer(self._position)
                 pygame.display.update()
                 self._checkFinished()
-        self._continuePump.set()
+                self._continuePump.set()
 
     def _drawBackground(self, pos):
         """
