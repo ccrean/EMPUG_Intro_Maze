@@ -275,5 +275,42 @@ class MazeTest(unittest.TestCase):
 
         m.close()
 
+    def testClear(self):
+        """
+        Make sure that the maze methods do not raise errors when they are
+        called on an empty maze.
+        """
+        m = Maze.Maze()
+        m.setDraw(False)
+
+        self.assertIsNone(m.draw())
+        self.assertIsNone(m.getFinish())
+        self.assertEqual(m.getOrientation(), 'N')
+        self.assertEqual(m.getPosition(), (0, 0))
+        self.assertIsNone(m.getStart())
+        self.assertFalse(m.isFinished())
+        self.assertIsNone(m.moveForward())
+        self.assertIsNone(m.pathIsClear())
+        self.assertIsNone(m.turnLeft())
+        self.assertIsNone(m.turnRight())
+        self.assertIsNone(m.wasVisited())
+
+        m.random(10, 10)
+        m.clear()
+
+        self.assertIsNone(m.draw())
+        self.assertIsNone(m.getFinish())
+        self.assertEqual(m.getOrientation(), 'N')
+        self.assertEqual(m.getPosition(), (0, 0))
+        self.assertIsNone(m.getStart())
+        self.assertFalse(m.isFinished())
+        self.assertIsNone(m.moveForward())
+        self.assertIsNone(m.pathIsClear())
+        self.assertIsNone(m.turnLeft())
+        self.assertIsNone(m.turnRight())
+        self.assertIsNone(m.wasVisited())
+
+        m.close()
+
 if __name__ == '__main__':
     unittest.main()

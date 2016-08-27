@@ -371,17 +371,18 @@ class Maze:
         False if the player was not able to move forward (there was a
         wall in the way).
         """
-        old_pos = self._position
-        self._placeBreadcrumb(old_pos)
-        next_cell = self._getNext()
-        if self._orientation in self._grid[old_pos[0]][old_pos[1]] and\
-                next_cell != self._position:
-            self._position = next_cell
-            moved = True
-        else:
-            moved = False
-        self._redrawPlayer(old_pos)
-        return moved
+        if self._grid:
+            old_pos = self._position
+            self._placeBreadcrumb(old_pos)
+            next_cell = self._getNext()
+            if self._orientation in self._grid[old_pos[0]][old_pos[1]] and\
+                    next_cell != self._position:
+                self._position = next_cell
+                moved = True
+            else:
+                moved = False
+            self._redrawPlayer(old_pos)
+            return moved
 
     def isFinished(self):
         """
@@ -398,16 +399,18 @@ class Maze:
         Returns True if the player can move forward (there is no wall
         in the way), False otherwise.
         """
-        next_cell = self._getNext()
-        cell = self._grid[self._position[0]][self._position[1]]
-        return self._orientation in cell and next_cell != cell
+        if self._grid:
+            next_cell = self._getNext()
+            cell = self._grid[self._position[0]][self._position[1]]
+            return self._orientation in cell and next_cell != cell
 
     def wasVisited(self):
         """
         Returns True if the player previously visited the cell in
         which he/she is currently located, False otherwise.
         """
-        return '*' in self._grid[self._position[0]][self._position[1]]
+        if self._grid:
+            return '*' in self._grid[self._position[0]][self._position[1]]
 
     def _checkFinished(self):
         """
