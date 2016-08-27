@@ -552,9 +552,17 @@ class Maze:
         return self._finish
 
     def getPosition(self):
+        """
+        Returns the (row, column) tuple corresponding to the player's
+        current position.
+        """
         return self._position
 
     def getOrientation(self):
+        """
+        Returns the orientation as a string.  The return value will be
+        one of 'N' (north), 'S' (south), 'E' (east), or 'W' (west).
+        """
         return self._orientation
 
     def _pumpEvent(self):
