@@ -1,4 +1,4 @@
-import itertools, StringIO, pygame, random, time, threading
+import itertools, StringIO, pygame, random, time, threading, graphics
 import MazeGenerator
 
 class Maze:
@@ -13,6 +13,13 @@ class Maze:
     _start_color = pygame.Color(0, 255, 0)
     _end_color = pygame.Color(0, 0, 255)
 
+    _player_color_graphics = 'red'
+    _font_color_graphics = 'black'
+    _bg_color_graphics = 'tan'
+    _wall_color_graphics = 'black'
+    _start_color_graphics = 'green'
+    _end_color_graphics = 'blue'
+
     def __init__(self):
         """
         Create a new, empty maze.
@@ -21,12 +28,14 @@ class Maze:
         self._killPump = threading.Event()
         self._continuePump = threading.Event()
         self._continuePump.clear()
-        self._pump = threading.Thread(target=self._pumpEvent)
-        self._pump.daemon = True
-        self._pump.start()
+        # self._pump = threading.Thread(target=self._pumpEvent)
+        # self._pump.daemon = True
+        # self._pump.start()
 
         self.clear()
         self._screen = None
+
+        self._win = None
 
         # Initialize fonts
         pygame.font.init()
@@ -242,8 +251,11 @@ class Maze:
                     len(self._grid[0]) + self._cell_sep
                 if self._screen == None or \
                         (pygame.display.Info().current_w,
-                         pygame.display.Info().current_h) != (width, height):
-                    self._screen = pygame.display.set_mode((width, height))
+                         pygame.display.Info().current_h) !=\
+                         (width, height):
+                         self._screen = pygame.display.set_mode((width, height))
+                         self._win = graphics.GraphWin("Maze", width, height)
+                         self._win.setBackground(self._bg_color_graphics)
                 self._screen.fill(self._bg_color)
                 for row_no, line in enumerate(self._grid):
                     for col_no, c in enumerate(line):
@@ -251,18 +263,44 @@ class Maze:
                                                 self._cell_sep)
                         y_coord = row_no * (self._cell_height +\
                                                 self._cell_sep)
+
+                        left = col_no * (self._cell_width +\
+                                             self._cell_sep)
+                        right = (col_no + 1) * (self._cell_width +\
+                                              self._cell_sep)
+                        top = row_no * (self._cell_height +\
+                                            self._cell_sep)
+                        bottom = (row_no + 1) * (self._cell_height +\
+                                                     self._cell_sep)
+                        top_left_corner = graphics.Point(left, top)
+                        top_right_corner = graphics.Point(right, top)
+                        bottom_left_corner = graphics.Point(left, bottom)
+                        bottom_right_corner = graphics.Point(right, bottom)
+                                           
                         if 'N' not in c:
                             self._screen.blit(self._top_wall,
                                              (x_coord, y_coord))
+                            line = graphics.Line(top_left_corner,
+                                                 top_right_corner)
+                            line.draw(self._win)
                         if 'E' not in c:
                             self._screen.blit(self._right_wall,
                                              (x_coord, y_coord))
+                            line = graphics.Line(top_right_corner,
+                                                 bottom_right_corner)
+                            line.draw(self._win)
                         if 'S' not in c:
                             self._screen.blit(self._bottom_wall,
                                              (x_coord, y_coord))
+                            line = graphics.Line(bottom_left_corner,
+                                                 bottom_right_corner)
+                            line.draw(self._win)
                         if 'W' not in c:
                             self._screen.blit(self._left_wall,
                                              (x_coord, y_coord))
+                            line = graphics.Line(top_left_corner,
+                                                 bottom_left_corner)
+                            line.draw(self._win)
                         self._drawBackground((row_no, col_no))
                 self._redrawPlayer(self._position)
                 pygame.display.update()
@@ -572,8 +610,8 @@ class Maze:
         to prevent the window from being erased when it is obscured by
         another window.
         """
-        while True:
-            self._continuePump.wait()
-            if self._killPump.isSet():
-                break
-            pygame.event.pump()
+        # while True:
+        #     self._continuePump.wait()
+        #     if self._killPump.isSet():
+        #         break
+        #     pygame.event.pump()
