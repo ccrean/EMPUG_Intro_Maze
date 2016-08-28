@@ -301,6 +301,17 @@ class Maze:
                             line = graphics.Line(top_left_corner,
                                                  bottom_left_corner)
                             line.draw(self._win)
+                        tl = graphics.Point(left + 1, top + 1)
+                        br = graphics.Point(right - 1, bottom - 1)
+                        rect = graphics.Rectangle(tl, br)
+                        if (row_no, col_no) == self._start:
+                            rect.setFill(self._start_color_graphics)
+                            rect.setOutline(self._start_color_graphics)
+                            rect.draw(self._win)
+                        elif (row_no, col_no) == self._finish:
+                            rect.setFill(self._end_color_graphics)
+                            rect.setOutline(self._end_color_graphics)
+                            rect.draw(self._win)
                         self._drawBackground((row_no, col_no))
                 self._redrawPlayer(self._position)
                 pygame.display.update()
