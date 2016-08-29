@@ -14,7 +14,7 @@ class Maze:
     _end_color = pygame.Color(0, 0, 255)
 
     _player_color_graphics = 'red'
-    _font_color_graphics = 'black'
+    _font_color_graphics = 'white'
     _bg_color_graphics = 'tan'
     _wall_color_graphics = 'black'
     _start_color_graphics = 'green'
@@ -519,6 +519,19 @@ class Maze:
                               congrats.get_height()) / 2
             self._screen.blit(congrats, (congrats_x, congrats_y))
             pygame.display.update()
+
+            height = (self._cell_height + self._cell_sep) *\
+                len(self._grid) + self._cell_sep
+            width = (self._cell_width + self._cell_sep) *\
+                len(self._grid[0]) + self._cell_sep
+            congrats_x = width // 2
+            congrats_y = height // 2
+            congrats_graphics = graphics.Text(
+                graphics.Point(congrats_x, congrats_y),
+                'You win!')
+            congrats_graphics.setFill(self._font_color_graphics)
+            congrats_graphics.setSize(36)
+            congrats_graphics.draw(self._win)
 
     def line(self, length):
         """
