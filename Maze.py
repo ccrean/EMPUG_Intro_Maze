@@ -36,6 +36,7 @@ class Maze:
         self._screen = None
 
         self._win = None
+        self._player_graphics = None
 
         # Initialize fonts
         pygame.font.init()
@@ -372,6 +373,45 @@ class Maze:
             pygame.event.pump()
             
             pygame.display.update()
+
+            if self._player_graphics:
+                self._player_graphics.undraw()
+
+            row_no, col_no = self.getPosition()
+            left = col_no * (self._cell_width +\
+                                 self._cell_sep) + self._cell_sep + 1
+            right = (col_no + 1) * (self._cell_width +\
+                                        self._cell_sep) - self._cell_sep - 1
+            top = row_no * (self._cell_height +\
+                                self._cell_sep) + self._cell_sep + 1
+            bottom = (row_no + 1) * (self._cell_height +\
+                                         self._cell_sep) -\
+                                         self._cell_sep - 1
+            vertical_center = (top + bottom) // 2
+            horizontal_center = (left + right) // 2
+
+            if self._orientation == 'N':
+                self._player_graphics = graphics.Polygon(
+                    graphics.Point(left, bottom),
+                    graphics.Point(horizontal_center, top),
+                    graphics.Point(right, bottom))
+            elif self._orientation == 'E':
+                self._player_graphics = graphics.Polygon(
+                    graphics.Point(left, top),
+                    graphics.Point(right, vertical_center),
+                    graphics.Point(left, bottom))
+            elif self._orientation == 'S':
+                self._player_graphics = graphics.Polygon(
+                    graphics.Point(left, top),
+                    graphics.Point(right, top),
+                    graphics.Point(horizontal_center, bottom))
+            elif self._orientation == 'W':
+                self._player_graphics = graphics.Polygon(
+                    graphics.Point(right, top),
+                    graphics.Point(right, bottom),
+                    graphics.Point(left, vertical_center))
+            self._player_graphics.setFill(self._player_color_graphics)
+            self._player_graphics.draw(self._win)
 
     def turnRight(self):
         """
