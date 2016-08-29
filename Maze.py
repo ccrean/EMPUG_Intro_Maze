@@ -34,6 +34,7 @@ class Maze:
 
         self.clear()
         self._screen = None
+        self._breadcrumbs = []
 
         self._win = None
         self._player_graphics = None
@@ -315,6 +316,7 @@ class Maze:
                             rect.draw(self._win)
                         self._drawBackground((row_no, col_no))
                 self._redrawPlayer(self._position)
+                self._redrawBreadcrumbs()
                 pygame.display.update()
                 self._checkFinished()
                 self._continuePump.set()
@@ -412,6 +414,8 @@ class Maze:
                     graphics.Point(left, vertical_center))
             self._player_graphics.setFill(self._player_color_graphics)
             self._player_graphics.draw(self._win)
+
+            self._drawBreadcrumb(old_pos)
 
     def turnRight(self):
         """
@@ -666,3 +670,35 @@ class Maze:
         #     if self._killPump.isSet():
         #         break
         #     pygame.event.pump()
+
+    def _drawBreadcrumb(self, pos):
+        row_no, col_no = pos
+        if '*' in self._grid[row_no][col_no] and self._trail and\
+                self._show and self._win:
+            x_coord = col_no * (self._cell_width +\
+                                    self._cell_sep) +\
+                                    self._cell_sep +\
+                                    self._cell_width / 2
+            y_coord = row_no * (self._cell_height +\
+                                    self._cell_sep) +\
+                                    self._cell_sep +\
+                                    self._cell_height / 2
+            radius = max(min(self._cell_width,
+                             self._cell_height) // 10, 1)
+            pygame.draw.circle(self._breadcrumb,
+                               self._wall_color,
+                               (self._cell_width / 2,
+                                self._cell_height / 2), radius)
+            breadcrumb = graphics.Circle(
+                graphics.Point(x_coord, y_coord), radius)
+            breadcrumb.setFill(self._wall_color_graphics)
+            breadcrumb.draw(self._win)
+            self._breadcrumbs.append(breadcrumb)
+
+    def _redrawBreadcrumbs(self):
+        while len(self._breadcrumbs) > 0:
+            bc = self._breadcrumbs.pop()
+            bc.undraw()
+        for row_no, line in enumerate(self._grid):
+            for col_no, c in enumerate(line):
+                self._drawBreadcrumb((row_no, col_no))
