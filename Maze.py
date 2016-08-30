@@ -32,12 +32,12 @@ class Maze:
         # self._pump.daemon = True
         # self._pump.start()
 
+        self._win = None
+        self._player_graphics = None
+
         self.clear()
         self._screen = None
         self._breadcrumbs = []
-
-        self._win = None
-        self._player_graphics = None
 
         # Initialize fonts
         pygame.font.init()
@@ -155,7 +155,6 @@ class Maze:
         """
         Return the maze to its initial (empty) state.
         """
-        self._continuePump.clear()
         self._grid = None
         self._start = None
         self._finish = None
@@ -168,8 +167,12 @@ class Maze:
         self._dirs = itertools.cycle(self._directions)
         self._orientation = self._dirs.next()
 
-        self._screen = None
-        pygame.display.quit()
+        # self._screen = None
+        # pygame.display.quit()
+
+        if self._win:
+            self._win.close()
+        self._win = None
 
     def setDraw(self, s):
         """
@@ -251,13 +254,15 @@ class Maze:
                     len(self._grid) + self._cell_sep
                 width = (self._cell_width + self._cell_sep) *\
                     len(self._grid[0]) + self._cell_sep
-                if self._screen == None or \
-                        (pygame.display.Info().current_w,
-                         pygame.display.Info().current_h) !=\
-                         (width, height):
-                         self._screen = pygame.display.set_mode((width, height))
-                         self._win = graphics.GraphWin("Maze", width, height)
-                         self._win.setBackground(self._bg_color_graphics)
+                if self._win != None and\
+                        (self._win.getWidth(), self._win.getHeight()) !=\
+                        (width, height):
+                    self._win.close()
+                    self._win = None
+                if self._win == None:
+                    self._screen = pygame.display.set_mode((width, height))
+                    self._win = graphics.GraphWin("Maze", width, height)
+                    self._win.setBackground(self._bg_color_graphics)
                 self._screen.fill(self._bg_color)
                 for row_no, line in enumerate(self._grid):
                     for col_no, c in enumerate(line):
