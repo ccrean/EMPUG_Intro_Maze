@@ -1,4 +1,4 @@
-import itertools, StringIO, pygame, random, time, threading, graphics
+import itertools, random, time, graphics
 import MazeGenerator
 
 class Maze:
@@ -6,12 +6,6 @@ class Maze:
     _cell_width = 20
     _cell_height = 20
     _cell_sep = 1
-    _player_color = pygame.Color(255, 0, 0)
-    _font_color = pygame.Color(0, 0, 0)
-    _bg_color = pygame.Color(210, 180, 140)
-    _wall_color = pygame.Color(0, 0, 0)
-    _start_color = pygame.Color(0, 255, 0)
-    _end_color = pygame.Color(0, 0, 255)
 
     _player_color_graphics = 'red'
     _font_color_graphics = 'white'
@@ -24,132 +18,15 @@ class Maze:
         """
         Create a new, empty maze.
         """
-        # Create a new thread to call pygame.event.pump()
-        self._killPump = threading.Event()
-        self._continuePump = threading.Event()
-        self._continuePump.clear()
-        # self._pump = threading.Thread(target=self._pumpEvent)
-        # self._pump.daemon = True
-        # self._pump.start()
-
         self._win = None
         self._player_graphics = None
 
         self.clear()
-        self._screen = None
         self._breadcrumbs = []
 
-        # Initialize fonts
-        pygame.font.init()
-
-        self._createGraphics()
-        self._createWalls()
         self.setDraw(True)
         self._generator = MazeGenerator.MazeGenerator()
         self._trail = False
-
-    def close(self):
-        """
-        Close the maze.  Should be called before the program
-        terminates.  None of the maze's methods should be called after
-        calling close.
-        """
-        self.clear()
-        self._killPump.set()
-        self._continuePump.set()
-        self._pump.join()
-
-    def _createGraphics(self):
-        """
-        Create the graphics objects that will be assembled into the full
-        maze image.  Should be called every time the maze is resized.
-        """
-        self._createPlayer()
-
-        transparent_color = pygame.Color(255, 0, 255)
-        # Create an image to represent cells that the player has already
-        # traveled through
-        self._breadcrumb = pygame.Surface((self._cell_width,
-                                           self._cell_height))
-        self._breadcrumb.fill(transparent_color)
-        self._breadcrumb.set_colorkey(transparent_color)
-        radius = max(min(self._cell_width, self._cell_height) / 10, 1)
-        pygame.draw.circle(self._breadcrumb, self._wall_color,
-                           (self._cell_width / 2,
-                            self._cell_height / 2), radius)
-
-        # Create cells to represent the start and end points
-        self._start_cell = pygame.Surface((self._cell_width,
-                                           self._cell_height))
-        self._start_cell.fill(self._start_color)
-        self._end_cell = pygame.Surface((self._cell_width,
-                                         self._cell_height))
-        self._end_cell.fill(self._end_color)
-
-
-        # Create an image to represent the background
-        self._background = pygame.Surface((self._cell_width,
-                                           self._cell_height))
-        self._background.fill(self._bg_color)
-        self._createWalls()
-
-    def _createPlayer(self):
-        """
-        Create a triangle image to represent the player.  By default, the
-        player will be facing north.
-        """
-        self._player = pygame.Surface((self._cell_width,
-                                       self._cell_height))
-        
-        # Give the player image a transparent background
-        transparent_color = pygame.Color(255, 0, 255)
-        self._player.fill(transparent_color)
-        self._player.set_colorkey(transparent_color)
-        pygame.draw.polygon(self._player, self._player_color,
-                            ((1, self._cell_height - 1),
-                             (self._cell_width - 1, self._cell_height - 1),
-                             (self._cell_width / 2, 1)))
-
-    def _createWalls(self):
-        """
-        Create images to represent walls.
-        """
-        top_left_corner = (0, 0)
-        top_right_corner = (self._cell_width + self._cell_sep, 0)
-        bottom_right_corner = (self._cell_width + self._cell_sep,
-                               self._cell_height + self._cell_sep)
-        bottom_left_corner = (0, self._cell_height + self._cell_sep)
-
-        self._left_wall = self._getTransparentCell()
-        pygame.draw.line(self._left_wall, self._wall_color,
-                         top_left_corner, bottom_left_corner)
-
-        self._top_wall = self._getTransparentCell()
-        pygame.draw.line(self._top_wall, self._wall_color,
-                         top_left_corner, top_right_corner)
-
-        self._right_wall = self._getTransparentCell()
-        pygame.draw.line(self._right_wall, self._wall_color,
-                         top_right_corner, bottom_right_corner)
-
-        self._bottom_wall = self._getTransparentCell()
-        pygame.draw.line(self._bottom_wall, self._wall_color,
-                         bottom_right_corner, bottom_left_corner)
-
-    def _getTransparentCell(self):
-        """
-        Returns a transparent cell of the current size specified by the
-        maze's _cell_width and _cell_height properties.
-        """
-        transparent_color = pygame.Color(255, 0, 255)
-        cell = pygame.Surface((self._cell_width + 2 * self._cell_sep,
-                               self._cell_height + 2 * self._cell_sep))
-        cell.fill(transparent_color)
-        cell.set_colorkey(transparent_color)
-        return cell
-
-    def __del__(self):
-        pygame.quit()
 
     def clear(self):
         """
@@ -159,16 +36,9 @@ class Maze:
         self._start = None
         self._finish = None
         self._position = (0, 0)
-
-        # Re-create the player icon, to get it facing in the right
-        # direction
-        self._createPlayer()
         
         self._dirs = itertools.cycle(self._directions)
         self._orientation = self._dirs.next()
-
-        # self._screen = None
-        # pygame.display.quit()
 
         if self._win:
             self._win.close()
@@ -246,9 +116,6 @@ class Maze:
         """
         if self._show:
             if self._grid:
-                # Pause pumping until we're done redrawing
-                self._continuePump.clear()
-                
                 # Size of screen
                 height = (self._cell_height + self._cell_sep) *\
                     len(self._grid) + self._cell_sep
@@ -260,10 +127,8 @@ class Maze:
                     self._win.close()
                     self._win = None
                 if self._win == None:
-                    self._screen = pygame.display.set_mode((width, height))
                     self._win = graphics.GraphWin("Maze", width, height)
                     self._win.setBackground(self._bg_color_graphics)
-                self._screen.fill(self._bg_color)
                 for row_no, line in enumerate(self._grid):
                     for col_no, c in enumerate(line):
                         x_coord = col_no * (self._cell_width +\
@@ -283,31 +148,26 @@ class Maze:
                         top_right_corner = graphics.Point(right, top)
                         bottom_left_corner = graphics.Point(left, bottom)
                         bottom_right_corner = graphics.Point(right, bottom)
-                                           
+
+                        # Draw the walls
                         if 'N' not in c:
-                            self._screen.blit(self._top_wall,
-                                             (x_coord, y_coord))
                             line = graphics.Line(top_left_corner,
                                                  top_right_corner)
                             line.draw(self._win)
                         if 'E' not in c:
-                            self._screen.blit(self._right_wall,
-                                             (x_coord, y_coord))
                             line = graphics.Line(top_right_corner,
                                                  bottom_right_corner)
                             line.draw(self._win)
                         if 'S' not in c:
-                            self._screen.blit(self._bottom_wall,
-                                             (x_coord, y_coord))
                             line = graphics.Line(bottom_left_corner,
                                                  bottom_right_corner)
                             line.draw(self._win)
                         if 'W' not in c:
-                            self._screen.blit(self._left_wall,
-                                             (x_coord, y_coord))
                             line = graphics.Line(top_left_corner,
                                                  bottom_left_corner)
                             line.draw(self._win)
+
+                        # Mark the starting and ending cells
                         tl = graphics.Point(left + 1, top + 1)
                         br = graphics.Point(right - 1, bottom - 1)
                         rect = graphics.Rectangle(tl, br)
@@ -319,42 +179,9 @@ class Maze:
                             rect.setFill(self._end_color_graphics)
                             rect.setOutline(self._end_color_graphics)
                             rect.draw(self._win)
-                        self._drawBackground((row_no, col_no))
                 self._redrawPlayer(self._position)
                 self._redrawBreadcrumbs()
-                pygame.display.update()
                 self._checkFinished()
-                self._continuePump.set()
-
-    def _drawBackground(self, pos):
-        """
-        Fill in the cell specified by pos with the background color.
-        Should be called on a cell anytime the player moves out of
-        that cell.
-        
-        Args:
-        pos (tuple): (row, column) of the cell that is to be filled in.
-        """
-        if self._show and self._screen:
-            row_no = pos[0]
-            col_no = pos[1]
-            x_coord = col_no * (self._cell_width +\
-                                    self._cell_sep) + self._cell_sep
-            y_coord = row_no * (self._cell_height +\
-                                    self._cell_sep) + self._cell_sep
-            c = self._grid[row_no][col_no]
-            if (row_no, col_no) == self._start:
-                self._screen.blit(self._start_cell,
-                                 (x_coord, y_coord))
-            elif (row_no, col_no) == self._finish:
-                self._screen.blit(self._end_cell,
-                                 (x_coord, y_coord))
-            else:
-                self._screen.blit(self._background,
-                                 (x_coord, y_coord))
-            if '*' in c and self._trail:
-                self._screen.blit(self._breadcrumb,
-                                 (x_coord, y_coord))
 
     def _redrawPlayer(self, old_pos):
         """
@@ -364,23 +191,16 @@ class Maze:
         old_pos (tuple): (row, column) of the cell previously occupied by
                          the player.
         """
-        if self._screen:
-            self._drawBackground(old_pos)
+        if self._win:
             x_coord = self._position[1] * (self._cell_height +\
-                                              self._cell_sep) +\
-                                              self._cell_sep
+                                               self._cell_sep) +\
+                                               self._cell_sep
             y_coord = self._position[0] * (self._cell_height +\
-                                              self._cell_sep) +\
-                                              self._cell_sep
-            self._screen.blit(self._player, (x_coord, y_coord))
+                                               self._cell_sep) +\
+                                               self._cell_sep
             self._checkFinished()
             
-            # Need to do this to stop the pygame window from freezing
-            # on Windows
-            pygame.event.pump()
-            
-            pygame.display.update()
-
+            # Remove the old player icon
             if self._player_graphics:
                 self._player_graphics.undraw()
 
@@ -397,6 +217,7 @@ class Maze:
             vertical_center = (top + bottom) // 2
             horizontal_center = (left + right) // 2
 
+            # Draw the new player icon, facing in the correct direction
             if self._orientation == 'N':
                 self._player_graphics = graphics.Polygon(
                     graphics.Point(left, bottom),
@@ -427,7 +248,6 @@ class Maze:
         Turn the player to the right (clockwise).
         """
         self._orientation = self._dirs.next()
-        self._player = pygame.transform.rotate(self._player, -90)
         self._redrawPlayer(self._position)
 
     def turnLeft(self):
@@ -436,7 +256,6 @@ class Maze:
         """
         for i in range(len(self._directions) - 1):
             self._orientation = self._dirs.next()
-        self._player = pygame.transform.rotate(self._player, 90)
         self._redrawPlayer(self._position)
 
     def _getNext(self):
@@ -516,15 +335,6 @@ class Maze:
         the end square.
         """
         if self.isFinished():
-            font = pygame.font.SysFont('monospace', 30)
-            congrats = font.render('You win!', 1, self._font_color)
-            congrats_x = (self._cell_width * len(self._grid[0]) -\
-                              congrats.get_width()) / 2
-            congrats_y = (self._cell_height * len(self._grid) -\
-                              congrats.get_height()) / 2
-            self._screen.blit(congrats, (congrats_x, congrats_y))
-            pygame.display.update()
-
             height = (self._cell_height + self._cell_sep) *\
                 len(self._grid) + self._cell_sep
             width = (self._cell_width + self._cell_sep) *\
@@ -676,19 +486,6 @@ class Maze:
         """
         return self._orientation
 
-    def _pumpEvent(self):
-        """
-        Call pygame.event.pump() in an infinite loop.  Necessary to
-        prevent the pygame window from freezing on Windows, and also
-        to prevent the window from being erased when it is obscured by
-        another window.
-        """
-        # while True:
-        #     self._continuePump.wait()
-        #     if self._killPump.isSet():
-        #         break
-        #     pygame.event.pump()
-
     def _drawBreadcrumb(self, pos):
         row_no, col_no = pos
         if '*' in self._grid[row_no][col_no] and self._trail and\
@@ -703,10 +500,6 @@ class Maze:
                                     self._cell_height / 2
             radius = max(min(self._cell_width,
                              self._cell_height) // 10, 1)
-            pygame.draw.circle(self._breadcrumb,
-                               self._wall_color,
-                               (self._cell_width / 2,
-                                self._cell_height / 2), radius)
             breadcrumb = graphics.Circle(
                 graphics.Point(x_coord, y_coord), radius)
             breadcrumb.setFill(self._wall_color_graphics)
