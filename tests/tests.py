@@ -1,4 +1,4 @@
-import unittest, StringIO, sys, os, pygame, cv2, filecmp
+import unittest, sys, os, cv2, filecmp, subprocess
 sys.path.append('..')
 import Maze
 
@@ -25,8 +25,6 @@ class MazeTest(unittest.TestCase):
         self.assertEqual(m.getOrientation(), 'E')
         m.turnLeft()
         self.assertEqual(m.getOrientation(), 'N')
-
-        m.close()
 
     def testMove(self):
         m = Maze.Maze()
@@ -101,8 +99,6 @@ class MazeTest(unittest.TestCase):
         m._position = m.getFinish()
         self.assertTrue(m.isFinished())
 
-        m.close()
-
     def testLine(self):
         """
         Test method for generating straight-line mazes.
@@ -122,8 +118,6 @@ class MazeTest(unittest.TestCase):
             self.assertTrue(m.isFinished())
             self.assertFalse(m.moveForward())
 
-        m.close()
-
     def testDraw(self):
         """
         Test the maze drawing methods.
@@ -133,27 +127,26 @@ class MazeTest(unittest.TestCase):
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
-        composite_command = ['compare', '-compose', 'src']
-
         m = Maze.Maze()
         m.setDraw(True)
         m.load('test_maze.txt')
 
         for direction in ['N', 'E', 'S', 'W']:
-            filename = 'maze_{}.png'.format(direction)
-            output_image = os.path.join(output_dir, filename)
-            input_image = os.path.join(input_dir, filename)
+            filename = 'maze_{}'.format(direction)
+            output_ps = os.path.join(output_dir, filename + '.ps')
+            output_png = os.path.join(output_dir, filename + '.png')
+            input_ps = os.path.join(input_dir, filename + '.ps')
+            input_image = os.path.join(input_dir, filename + '.png')
 
-            m.screenshot(output_image)
+            m.screenshot(output_ps)
+            subprocess.call(['convert', output_ps, output_png])
 
             # Perform a pixel-by-pixel comparison of the two images
             img_ref = cv2.imread(input_image)
-            img_test = cv2.imread(output_image)
+            img_test = cv2.imread(output_png)
             self.assertTrue((img_ref == img_test).all())
 
             m.turnRight()
-
-        m.close()
 
     def testResize(self):
         """
@@ -175,8 +168,6 @@ class MazeTest(unittest.TestCase):
         img_test = cv2.imread(output_file)
         self.assertTrue((img_ref == img_test).all())
 
-        m.close()
-
     def testSave(self):
         """
         Test the save method.
@@ -190,8 +181,6 @@ class MazeTest(unittest.TestCase):
         m.save(output_file)
 
         self.assertTrue(filecmp.cmp(filename, output_file))
-
-        m.close()
 
     def testSpiral(self):
         """
@@ -236,8 +225,6 @@ class MazeTest(unittest.TestCase):
         self.assertEqual(m.getStart(), (0, 0))
         self.assertEqual(m.getFinish(), (2, 1))
 
-        m.close()
-
     def testTrail(self):
         m = Maze.Maze()
         m.load('test_maze.txt')
@@ -273,8 +260,6 @@ class MazeTest(unittest.TestCase):
         img_test = cv2.imread(output_off)
         self.assertTrue((img_ref == img_test).all())
 
-        m.close()
-
     def testClear(self):
         """
         Make sure that the maze methods do not raise errors when they are
@@ -309,8 +294,6 @@ class MazeTest(unittest.TestCase):
         self.assertIsNone(m.turnLeft())
         self.assertIsNone(m.turnRight())
         self.assertIsNone(m.wasVisited())
-
-        m.close()
 
 if __name__ == '__main__':
     unittest.main()
