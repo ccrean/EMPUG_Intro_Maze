@@ -4,6 +4,15 @@ import Maze
 
 class MazeTest(unittest.TestCase):
 
+    def savepng(self, maze, file_basename):
+        """
+        A helper method to save a screenshot of the maze and convert
+        it to a png.
+        """
+        maze.screenshot(file_basename + '.ps')
+        subprocess.call(['convert', file_basename + '.ps',
+                         file_basename + '.png'])
+
     def testTurn(self):
         m = Maze.Maze()
 
@@ -245,21 +254,23 @@ class MazeTest(unittest.TestCase):
         m.moveForward()
 
         m.setTrail(True)
-        output_on = os.path.join('output', 'maze_trail_on.png')
-        m.screenshot(output_on)
+        output_on = os.path.join('output', 'maze_trail_on')
+        # m.screenshot(output_on)
+        self.savepng(m, output_on)
 
         m.setTrail(False)
-        output_off = os.path.join('output', 'maze_trail_off.png')
-        m.screenshot(output_off)
+        output_off = os.path.join('output', 'maze_trail_off')
+        # m.screenshot(output_off)
+        self.savepng(m, output_off)
 
         input_on = os.path.join('images', 'maze_trail_on.png')
         img_ref = cv2.imread(input_on)
-        img_test = cv2.imread(output_on)
+        img_test = cv2.imread(output_on + '.png')
         self.assertTrue((img_ref == img_test).all())
 
         input_off = os.path.join('images', 'maze_trail_off.png')
         img_ref = cv2.imread(input_off)
-        img_test = cv2.imread(output_off)
+        img_test = cv2.imread(output_off + '.png')
         self.assertTrue((img_ref == img_test).all())
 
     def testClear(self):
