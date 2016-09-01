@@ -443,7 +443,7 @@ class Maze:
             if self._grid:
                 for row in self._grid:
                     for cell in row:
-                        output_file.write(cell + ' ')
+                        output_file.write(cell.replace('*', '') + ' ')
                     output_file.write('\n')
 
     def screenshot(self, filename):

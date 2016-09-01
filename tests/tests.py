@@ -193,6 +193,22 @@ class MazeTest(unittest.TestCase):
 
         self.assertTrue(filecmp.cmp(filename, output_file))
 
+        # Check to make sure that we are not saving breadcrumbs
+        output_file_visited = os.path.join('output',
+                                           'test_maze_visited.txt')
+        m.clear()
+        m.load(filename)
+
+        m.turnRight()
+        m.moveForward()
+        m.moveForward()
+        m.moveForward()
+        m.turnRight()
+        m.moveForward()
+
+        m.save(output_file_visited)
+        self.assertTrue(filecmp.cmp(filename, output_file_visited))
+
     def testSpiral(self):
         """
         Test the spiral maze generation.
