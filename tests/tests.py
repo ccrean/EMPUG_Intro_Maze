@@ -306,5 +306,25 @@ class MazeTest(unittest.TestCase):
         self.assertIsNone(m.turnRight())
         self.assertIsNone(m.wasVisited())
 
+    def testFinished(self):
+        """
+        Tests that the congratulatory message is correctly displayed
+        when the player finished the maze.
+        """
+        m = Maze.Maze()
+        m.load('test_maze.txt')
+
+        m._position = m.getFinish()
+        m.draw()
+
+        input_file = os.path.join('images', 'winner.png')
+        output_file = os.path.join('output', 'winner')
+
+        self.savepng(m, output_file)
+
+        img_ref = cv2.imread(input_file)
+        img_test = cv2.imread(output_file + '.png')
+        self.assertTrue((img_ref == img_test).all())
+
 if __name__ == '__main__':
     unittest.main()
