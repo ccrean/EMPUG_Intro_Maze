@@ -142,16 +142,16 @@ class MazeTest(unittest.TestCase):
 
         for direction in ['N', 'E', 'S', 'W']:
             filename = 'maze_{}'.format(direction)
-            output_ps = os.path.join(output_dir, filename + '.ps')
-            output_png = os.path.join(output_dir, filename + '.png')
             input_image = os.path.join(input_dir, filename + '.png')
+            output_image = os.path.join(output_dir, filename)
 
-            m.screenshot(output_ps)
-            subprocess.call(['convert', output_ps, output_png])
+            self.savepng(m, output_image)
+            subprocess.call(['convert', output_image + '.ps',
+                             output_image + '.png'])
 
             # Perform a pixel-by-pixel comparison of the two images
             img_ref = cv2.imread(input_image)
-            img_test = cv2.imread(output_png)
+            img_test = cv2.imread(output_image + '.png')
             self.assertTrue((img_ref == img_test).all())
 
             m.turnRight()
@@ -162,8 +162,7 @@ class MazeTest(unittest.TestCase):
         """
         filename = 'maze_large'
         input_file = os.path.join('images', filename + '.png')
-        output_ps = os.path.join('output', filename + '.ps')
-        output_png = os.path.join('output', filename + '.png')
+        output_file = os.path.join('output', filename)
 
         m = Maze.Maze()
         m.setDraw(True)
@@ -171,12 +170,13 @@ class MazeTest(unittest.TestCase):
 
         m.setCellWidth(50)
         m.setCellHeight(50)
-        m.screenshot(output_ps)
+        self.savepng(m, output_file)
 
-        subprocess.call(['convert', output_ps, output_png])
+        subprocess.call(['convert', output_file + '.ps',
+                         output_file + '.png'])
 
         img_ref = cv2.imread(input_file)
-        img_test = cv2.imread(output_png)
+        img_test = cv2.imread(output_file + '.png')
         self.assertTrue((img_ref == img_test).all())
 
     def testSave(self):
@@ -255,12 +255,10 @@ class MazeTest(unittest.TestCase):
 
         m.setTrail(True)
         output_on = os.path.join('output', 'maze_trail_on')
-        # m.screenshot(output_on)
         self.savepng(m, output_on)
 
         m.setTrail(False)
         output_off = os.path.join('output', 'maze_trail_off')
-        # m.screenshot(output_off)
         self.savepng(m, output_off)
 
         input_on = os.path.join('images', 'maze_trail_on.png')
