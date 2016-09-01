@@ -453,10 +453,11 @@ class Maze:
         Save a screenshot of the maze.
 
         Args:
-        filename (string): The file to which the screenshot should be
-                           saved.
+        filename (string): The postscript file to which the screenshot
+                           should be saved.
         """
-        pygame.image.save(self._screen, filename)
+        if self._win:
+            self._win.postscript(file=filename, colormode='color')
 
     def getStart(self):
         """
