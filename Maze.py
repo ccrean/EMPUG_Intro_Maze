@@ -418,7 +418,6 @@ class Maze:
         width (int): Width of the cells (in pixels).
         """
         self._cell_width = width
-        self._createGraphics()
         self.draw()
 
     def setCellHeight(self, height):
@@ -429,7 +428,6 @@ class Maze:
         height (int): Height of the cells (in pixels).
         """
         self._cell_height = height
-        self._createGraphics()
         self.draw()
 
     def save(self, filename):
