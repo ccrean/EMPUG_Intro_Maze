@@ -27,6 +27,7 @@ class Maze:
         self.setDraw(True)
         self._generator = MazeGenerator.MazeGenerator()
         self._trail = False
+        self._congrats_graphics = None
 
     def clear(self):
         """
@@ -128,7 +129,6 @@ class Maze:
                     self._win = None
                 if self._win == None:
                     self._win = graphics.GraphWin("Maze", width, height)
-                    self._win.setBackground(self._bg_color_graphics)
                 for row_no, line in enumerate(self._grid):
                     for col_no, c in enumerate(line):
                         x_coord = col_no * (self._cell_width +\
@@ -182,6 +182,7 @@ class Maze:
                 self._redrawPlayer(self._position)
                 self._redrawBreadcrumbs()
                 self._checkFinished()
+                self._win.setBackground(self._bg_color_graphics)
 
     def _redrawPlayer(self, old_pos):
         """
@@ -335,18 +336,22 @@ class Maze:
         the end square.
         """
         if self.isFinished():
-            height = (self._cell_height + self._cell_sep) *\
-                len(self._grid) + self._cell_sep
-            width = (self._cell_width + self._cell_sep) *\
-                len(self._grid[0]) + self._cell_sep
-            congrats_x = width // 2
-            congrats_y = height // 2
-            congrats_graphics = graphics.Text(
-                graphics.Point(congrats_x, congrats_y),
-                'You win!')
-            congrats_graphics.setFill(self._font_color_graphics)
-            congrats_graphics.setSize(36)
-            congrats_graphics.draw(self._win)
+            if not self._congrats_graphics:
+                height = (self._cell_height + self._cell_sep) *\
+                    len(self._grid) + self._cell_sep
+                width = (self._cell_width + self._cell_sep) *\
+                    len(self._grid[0]) + self._cell_sep
+                congrats_x = width // 2
+                congrats_y = height // 2
+                self._congrats_graphics = graphics.Text(
+                    graphics.Point(congrats_x, congrats_y),
+                    'You win!')
+                self._congrats_graphics.setFill(self._font_color_graphics)
+                self._congrats_graphics.setSize(36)
+                self._congrats_graphics.draw(self._win)
+        elif self._congrats_graphics:
+            self._congrats_graphics.undraw()
+            self._congrats_graphics = None
 
     def line(self, length):
         """
@@ -512,3 +517,21 @@ class Maze:
         for row_no, line in enumerate(self._grid):
             for col_no, c in enumerate(line):
                 self._drawBreadcrumb((row_no, col_no))
+
+    def restart(self):
+        """
+        Resets the current maze.
+        """
+        if self._grid:
+            self._position = self._start
+
+            # Remove breadcrumbs
+            for row_no, row in enumerate(self._grid):
+                for cell_no, cell in enumerate(row):
+                    self._grid[row_no][cell_no] = cell.replace('*', '')
+
+            # Turn player to face north
+            while self._orientation != 'N':
+                self._orientation = self._dirs.next()
+
+            self.draw()

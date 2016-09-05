@@ -342,5 +342,16 @@ class MazeTest(unittest.TestCase):
         img_test = cv2.imread(output_file + '.png')
         self.assertTrue((img_ref == img_test).all())
 
+        # Test the restart method
+        m.turnRight()
+        m.restart()
+        input_file = os.path.join('images', 'restart.png')
+        output_file = os.path.join('output', 'restart')
+        self.savepng(m, output_file)
+        
+        img_ref = cv2.imread(input_file)
+        img_test = cv2.imread(output_file + '.png')
+        self.assertTrue((img_ref == img_test).all())
+
 if __name__ == '__main__':
     unittest.main()
