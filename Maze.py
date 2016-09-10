@@ -1,4 +1,4 @@
-import itertools, random, time, graphics
+import itertools, graphics
 import MazeGenerator
 
 class Maze:

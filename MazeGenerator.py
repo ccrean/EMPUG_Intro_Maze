@@ -1,5 +1,4 @@
 import random, math
-import IPython
 
 class MazeGenerator:
     directions = ['N', 'E', 'S', 'W']
